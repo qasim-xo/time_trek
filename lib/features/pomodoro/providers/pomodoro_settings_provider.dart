@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 
 class PomodoroSettingsState {
@@ -51,14 +52,25 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
     state = state.copyWith(focusSession: newFocusSession);
 
     final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+    // final isBreak = ref.read(pomodoroTimerProvider).isBreak; 
 
-    if (!isRunning) {
+    final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
+
+    if (!isRunning && pomodoroTimerType == PomodoroTimerType.focusSession) {
       ref.read(pomodoroTimerProvider.notifier).setTime(newFocusSession);
     }
   }
 
   void setShortBreak(Duration newShortBreak) {
     state = state.copyWith(shortBreak: newShortBreak);
+
+     final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+    // final isBreak = ref.read(pomodoroTimerProvider).isBreak;
+     final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
+    if (!isRunning && pomodoroTimerType == PomodoroTimerType.shortBreak) {
+      ref.read(pomodoroTimerProvider.notifier).setTime(newShortBreak);
+    }
+
   }
 
   void setLongBreak(Duration newLongBreak) {

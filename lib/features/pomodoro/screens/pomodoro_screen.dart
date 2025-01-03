@@ -44,7 +44,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(onPressed: isRunning == false ? () {
-                    ref.read(pomodoroTimerProvider.notifier).startTimer(); 
+                    ref.read(pomodoroTimerProvider.notifier).startFocusSession(); 
                   } : () {
                     ref.read(pomodoroTimerProvider.notifier).pauseTimer();
                   }

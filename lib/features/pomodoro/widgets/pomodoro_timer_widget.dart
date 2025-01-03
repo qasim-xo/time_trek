@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
@@ -14,7 +15,9 @@ class PomodoroTimerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
    
-    final isBreak = ref.watch(pomodoroTimerProvider).isBreak;
+    // final isBreak = ref.watch(pomodoroTimerProvider).isBreak;
+
+    final pomodoroTimerType = ref.watch(pomodoroTimerProvider).pomodoroTimerType;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -54,7 +57,7 @@ class PomodoroTimerWidget extends ConsumerWidget {
                                   ?.copyWith(fontSize: 40.0));
                     },
                   ),
-                 isBreak == true ? const Text("Break") : const Text("Focus"),
+                 pomodoroTimerType==PomodoroTimerType.shortBreak ? const Text("Short Break") : const Text("Focus"),
                 ],
               )),
             ],
