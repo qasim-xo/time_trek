@@ -57,41 +57,52 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(time: newTime);
   }
 
-  void startFocusSession() {
-    state = state.copyWith(isRunning: true);
-   
-    state.timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+void startFocusSession() {
+  state = state.copyWith(
+    isRunning: true,
+    timer: Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
      
-      state = state.copyWith(time: state.time! - const Duration(seconds: 1));
+        if (state.time == null) {
+          timer.cancel();
+          state = state.copyWith(isRunning: false);
+          return;
+        }
 
-      int minutes = state.time!.inMinutes;
-      int seconds = state.time!.inSeconds % 60;
+    
+        final updatedTime = state.time! - const Duration(seconds: 1);
+        state = state.copyWith(time: updatedTime);
 
-      if (minutes <= 0 && seconds <= 0) {
-        state = state.copyWith(isRunning: false);
-        timer.cancel();
-        // if (!state.isBreak)
-        // {
-        //    debugPrint ("Focus Session Ended");
-        // }
+  
+        int minutes = updatedTime.inMinutes;
+        int seconds = updatedTime.inSeconds % 60;
+
         
-        startShortBreak();    
+        if (minutes <= 0 && seconds <= 0) {
+          timer.cancel();
+          state = state.copyWith(isRunning: false, timer: null);
+          startShortBreak();
+        }
+      },
+    ),
+  );
+}
 
-        // setTime(ref.read(pomodoroSettingsProvider).shortBreak);
-      }
-    });
-  }
 
 
   void startShortBreak () 
   {
     final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
     final shortBreak = ref.read(pomodoroSettingsProvider).shortBreak;
-    
+
       if (state.pomodoroTimerType==PomodoroTimerType.shortBreak) {
           state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
           setTime(focusSession);
         } else if (state.pomodoroTimerType==PomodoroTimerType.focusSession) {
+          state.countFocusSessions = state.countFocusSessions! + 1;
+          state.copyWith(countFocusSessions: state.countFocusSessions);
+          debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
           state = state.copyWith(pomodoroTimerType: PomodoroTimerType.shortBreak);
           setTime(shortBreak);
         }
