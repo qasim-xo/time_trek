@@ -40,7 +40,7 @@ class ProjectNotifier extends Notifier<ProjectState> {
         Project(projectId: projectId, projectTitle: state.projectTitle);
 
     state = state.copyWith(projectList: [...state.projectList, newProject]);
-    AppDatabase().addProject(newProject.toCompanion());
+    AppDatabase().projectDao.addProject(newProject.toCompanion());
   }
 
   void setProjectTitle(String projectTitle) {
@@ -52,7 +52,7 @@ class ProjectNotifier extends Notifier<ProjectState> {
   }
 
   void fetchAllProjects() async {
-    final tasks = await AppDatabase().loadAllProjects();
+    final tasks = await AppDatabase().projectDao.loadAllProjects();
     state = state.copyWith(projectList: tasks.toProjectList());
   }
 
@@ -63,7 +63,7 @@ class ProjectNotifier extends Notifier<ProjectState> {
 
     state = state.copyWith(projectList: deletedProjectListItem);
 
-    AppDatabase().deleteProject(project.projectId);
+    AppDatabase().projectDao.deleteProject(project.projectId);
   }
 
   void updateProject(Project project) {
@@ -75,7 +75,7 @@ class ProjectNotifier extends Notifier<ProjectState> {
 
     state = state.copyWith(projectList: newProjectList);
 
-    AppDatabase().updateProject(project);
+    AppDatabase().projectDao.updateProject(project);
   }
 
   // void setProjectList(List<Project> projectList) {

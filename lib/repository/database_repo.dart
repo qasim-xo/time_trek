@@ -1,8 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/model/project/project.dart';
 import 'package:project_management_app/model/task/task.dart';
+import 'package:project_management_app/repository/dao/project/project_dao.dart';
+import 'package:project_management_app/repository/dao/task/task_dao.dart';
+import 'package:project_management_app/repository/tables/project_table.dart';
+import 'package:project_management_app/repository/tables/task_table.dart';
 
 part 'database_repo.g.dart';
 
@@ -20,44 +25,6 @@ class AppDatabase extends _$AppDatabase {
     return driftDatabase(name: 'my_database');
   }
 
-  Future<int> addTask(TaskDatabaseTableCompanion task) {
-    return into(taskDatabaseTable).insert(task);
-  }
-
-  Future<List<TaskDatabaseTableData>> loadAllTasks() async {
-    final List<TaskDatabaseTableData> tasks = await taskDatabaseTable.all().get();
-    return tasks;
-  }
-
-  Future<void> deleteTask(String taskId) async {
-    await (delete(taskDatabaseTable)..where((t) => t.taskId.equals(taskId))).go();
-  }
-
-  Future<void> updateTask(Task task) async {
-    await (update(taskDatabaseTable)..where((t) => t.taskId.equals(task.taskId)))
-        .write(task.toCompanion());
-  }
-
-  Future<int> addProject(ProjectDatabaseTableCompanion project) {
-    return into(projectDatabaseTable).insert(project);
-  }
-
-  Future<List<ProjectDatabaseTableData>> loadAllProjects() async {
-    final List<ProjectDatabaseTableData> tasks = await projectDatabaseTable.all().get();
-    return tasks;
-  }
-
-  Future<void> deleteProject(String projectId) async {
-
-    await (delete(taskDatabaseTable)..where((t) => t.projectId.equals(projectId))).go();
-
-    await (delete(projectDatabaseTable)..where((p) => p.projectId.equals(projectId)))
-        .go();
-  }
-
-  Future<void> updateProject(Project project) async {
-    await (update(projectDatabaseTable)
-          ..where((p) => p.projectId.equals(project.projectId)))
-        .write(project.toCompanion());
-  }
+  TaskDao get taskDao => TaskDao(this);
+  ProjectDao get projectDao => ProjectDao(this);
 }

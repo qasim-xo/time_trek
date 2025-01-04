@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
- // Adjust path as needed
+// Adjust path as needed
 import 'package:uuid/uuid.dart';
 
 class TaskState {
@@ -73,7 +74,7 @@ class TaskNotifier extends Notifier<TaskState> {
     state = state.copyWith(
         taskList: [...state.taskList, newTask],
         filteredTaskList: [...state.filteredTaskList, newTask]);
-    AppDatabase().addTask(newTask.toCompanion());
+    AppDatabase().taskDao.addTask(newTask.toCompanion());
   }
 
   void setProjectId(String projectId) {
@@ -90,7 +91,7 @@ class TaskNotifier extends Notifier<TaskState> {
     state =
         state.copyWith(filteredTaskList: newTaskList, taskList: newTaskList);
 
-    AppDatabase().updateTask(task);
+    AppDatabase().taskDao.updateTask(task);
   }
 
   void deleteTask(Task task) {
@@ -100,11 +101,11 @@ class TaskNotifier extends Notifier<TaskState> {
     state = state.copyWith(
         filteredTaskList: deletedTaskListItem, taskList: deletedTaskListItem);
 
-    AppDatabase().deleteTask(task.taskId);
+    AppDatabase().taskDao.deleteTask(task.taskId);
   }
 
   void fetchAllTasks() async {
-    final tasks = await AppDatabase().loadAllTasks();
+    final tasks = await AppDatabase().taskDao.loadAllTasks();
     state = state.copyWith(
         taskList: tasks.toTaskList(), filteredTaskList: tasks.toTaskList());
   }
