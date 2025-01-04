@@ -41,6 +41,7 @@ dependencies:
   auto_route: ^9.2.2
   drift: ^2.23.0
   drift_flutter: ^0.2.3
+  riverpod_lint: ^2.6.3
   
   
 

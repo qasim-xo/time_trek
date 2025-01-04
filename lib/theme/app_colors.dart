@@ -12,4 +12,5 @@ class AppColors {
 
   //pomodoro timer widget
   static const pomodoroRingColor = Color.fromARGB(255, 89, 88, 88);
+  static const floatingPomodoroTimerWidgetColor = Colors.lightBlueAccent;
 }

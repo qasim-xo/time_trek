@@ -4,41 +4,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
-
+import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
 class PomodoroTimerState {
+  String taskId;
   bool isRunning;
-  PomodoroTimerType pomodoroTimerType; 
+  PomodoroTimerType pomodoroTimerType;
   Timer? timer;
-  Duration? time;
-  int? countFocusSessions ; 
-  
+  Duration? pomodoroTime;
+  int? countFocusSessions;
 
   PomodoroTimerState(
-      {required this.isRunning,
+      {required this.taskId,
+      required this.isRunning,
       required this.timer,
-      required this.time,
+      required this.pomodoroTime,
       required this.pomodoroTimerType,
-      required this.countFocusSessions
-      });
+      required this.countFocusSessions});
 
   PomodoroTimerState copyWith(
-      {bool? isRunning, Timer? timer, Duration? time, bool? isBreak, int? countFocusSessions, PomodoroTimerType? pomodoroTimerType}) {
+      {String? taskId,
+      bool? isRunning,
+      Timer? timer,
+      Duration? pomodoroTime,
+      bool? isBreak,
+      int? countFocusSessions,
+      PomodoroTimerType? pomodoroTimerType}) {
     return PomodoroTimerState(
+        taskId: taskId ?? this.taskId,
         isRunning: isRunning ?? this.isRunning,
         timer: timer ?? this.timer,
-        time: time ?? this.time,
+        pomodoroTime: pomodoroTime ?? this.pomodoroTime,
         pomodoroTimerType: pomodoroTimerType ?? this.pomodoroTimerType,
-        countFocusSessions: countFocusSessions ?? this.countFocusSessions
-        );
+        countFocusSessions: countFocusSessions ?? this.countFocusSessions);
   }
 
   factory PomodoroTimerState.initial() {
     return PomodoroTimerState(
-        countFocusSessions: 1,
+        taskId: '',
+        countFocusSessions: 0,
         isRunning: false,
         timer: null,
-        time: const Duration(minutes: 25, seconds: 0),
+        pomodoroTime: const Duration(minutes: 25, seconds: 0),
         pomodoroTimerType: PomodoroTimerType.focusSession);
   }
 }
@@ -53,79 +60,83 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(isRunning: newIsRunning);
   }
 
-  void setTime(Duration newTime) {
-    state = state.copyWith(time: newTime);
+  void setPomodoroTime(Duration newTime) {
+    state = state.copyWith(pomodoroTime: newTime);
   }
 
-void startFocusSession() {
-  state = state.copyWith(
-    isRunning: true,
-    timer: Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-     
-        if (state.time == null) {
-          timer.cancel();
-          state = state.copyWith(isRunning: false);
-          return;
-        }
+  void startFocusSession() {
+    ref.read(floatingPomodoroTimerProvider.notifier).setIsWidgetActive(true);
 
-    
-        final updatedTime = state.time! - const Duration(seconds: 1);
-        state = state.copyWith(time: updatedTime);
+    state = state.copyWith(
+      isRunning: true,
+      timer: Timer.periodic(
+        const Duration(seconds: 1),
+        (timer) {
+          if (state.pomodoroTime == null) {
+            timer.cancel();
+            state = state.copyWith(isRunning: false);
+            return;
+          }
 
-  
-        int minutes = updatedTime.inMinutes;
-        int seconds = updatedTime.inSeconds % 60;
+          final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
+          state = state.copyWith(pomodoroTime: updatedTime);
 
-        
-        if (minutes <= 0 && seconds <= 0) {
-          timer.cancel();
-          state = state.copyWith(isRunning: false, timer: null);
-          startShortBreak();
-        }
-      },
-    ),
-  );
-}
+          int minutes = updatedTime.inMinutes;
+          int seconds = updatedTime.inSeconds % 60;
 
+          if (minutes <= 0 && seconds <= 0) {
+            if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
+              state.countFocusSessions = state.countFocusSessions! + 1;
+              state.copyWith(countFocusSessions: state.countFocusSessions);
+            }
 
+            timer.cancel();
 
-  void startShortBreak () 
-  {
+            state = state.copyWith(isRunning: false);
+            final longBreakInterval =
+                ref.read(pomodoroSettingsProvider).longBreakInterval;
+
+            if (state.countFocusSessions! % longBreakInterval == 0) {
+              startLongBreak();
+            } else {
+              debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
+              startShortBreak();
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  void startShortBreak() {
     final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
     final shortBreak = ref.read(pomodoroSettingsProvider).shortBreak;
 
-      if (state.pomodoroTimerType==PomodoroTimerType.shortBreak) {
-          state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
-          setTime(focusSession);
-        } else if (state.pomodoroTimerType==PomodoroTimerType.focusSession) {
-          state.countFocusSessions = state.countFocusSessions! + 1;
-          state.copyWith(countFocusSessions: state.countFocusSessions);
-          debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
-          state = state.copyWith(pomodoroTimerType: PomodoroTimerType.shortBreak);
-          setTime(shortBreak);
-        }
-        else 
-        {
-           
-        }
+    if (state.pomodoroTimerType == PomodoroTimerType.shortBreak) {
+      state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
+      setPomodoroTime(focusSession);
+    } else if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
+      debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
+      state = state.copyWith(pomodoroTimerType: PomodoroTimerType.shortBreak);
+      setPomodoroTime(shortBreak);
+    }
   }
 
-
-  void startLongBreak () 
-  {
+  void startLongBreak() {
     final longBreak = ref.read(pomodoroSettingsProvider).longBreak;
     final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
-    final longBreakInterval = ref.read(pomodoroSettingsProvider).longBreakInterval;
 
-    if (state.countFocusSessions! % longBreakInterval == 0) {
-      state = state.copyWith(isBreak: true);
-      setTime(longBreak);
-    } else {
-      state = state.copyWith(isBreak: false);
-      setTime(focusSession);
+    if (state.pomodoroTimerType == PomodoroTimerType.longBreak) {
+      state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
+      setPomodoroTime(focusSession);
+    } else if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
+      state = state.copyWith(pomodoroTimerType: PomodoroTimerType.longBreak);
+      setPomodoroTime(longBreak);
     }
+  }
+
+  void setTaskIdAndProjectIdTimerIsRunningFor(String taskId) {
+    state = state.copyWith(taskId: taskId);
   }
 
   void pauseTimer() {
@@ -136,5 +147,4 @@ void startFocusSession() {
 
 final pomodoroTimerProvider =
     NotifierProvider<PomodoroTimerNotifier, PomodoroTimerState>(
-   PomodoroTimerNotifier.new
-);
+        PomodoroTimerNotifier.new);

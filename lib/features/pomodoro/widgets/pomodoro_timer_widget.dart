@@ -6,7 +6,6 @@ import 'package:project_management_app/features/pomodoro/providers/pomodoro_sett
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/theme/app_colors.dart';
 
-
 class PomodoroTimerWidget extends ConsumerWidget {
   const PomodoroTimerWidget({
     super.key,
@@ -14,10 +13,9 @@ class PomodoroTimerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-   
-    // final isBreak = ref.watch(pomodoroTimerProvider).isBreak;
+    final pomodoroTimerType =
+        ref.watch(pomodoroTimerProvider).pomodoroTimerType;
 
-    final pomodoroTimerType = ref.watch(pomodoroTimerProvider).pomodoroTimerType;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -25,14 +23,45 @@ class PomodoroTimerWidget extends ConsumerWidget {
           height: 200.0,
           child: Stack(
             children: <Widget>[
-              const Center(
+              Center(
                 child: SizedBox(
                   width: 200,
                   height: 200,
-                  child: CircularProgressIndicator(
-                    backgroundColor: AppColors.titleColor,
-                    strokeWidth: 10,
-                    value: 0.5,
+                  child: Consumer(
+                    builder:
+                        (BuildContext context, WidgetRef ref, Widget? child) {
+                      double progress = 0;
+                      final time =
+                          ref.watch(pomodoroTimerProvider).pomodoroTime;
+                      final focusSession = ref
+                          .watch(pomodoroSettingsProvider)
+                          .focusSession
+                          .inSeconds;
+                      final longBreak = ref
+                          .watch(pomodoroSettingsProvider)
+                          .longBreak
+                          .inSeconds;
+                      final shortBreak = ref
+                          .watch(pomodoroSettingsProvider)
+                          .shortBreak
+                          .inSeconds;
+
+                      if (pomodoroTimerType == PomodoroTimerType.focusSession) {
+                        progress = (time!.inSeconds) / focusSession;
+                      } else if (pomodoroTimerType ==
+                          PomodoroTimerType.shortBreak) {
+                        progress = (time!.inSeconds) / shortBreak;
+                      } else {
+                        progress = (time!.inSeconds) / longBreak;
+                      }
+
+                      return CircularProgressIndicator(
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: AppColors.titleColor,
+                        strokeWidth: 10,
+                        value: progress,
+                      );
+                    },
                   ),
                 ),
               ),
@@ -43,21 +72,23 @@ class PomodoroTimerWidget extends ConsumerWidget {
                   Consumer(
                     builder:
                         (BuildContext context, WidgetRef ref, Widget? child) {
-                        
-                      final time = ref.watch(pomodoroTimerProvider).time;
-                       final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak;
+                      final time =
+                          ref.watch(pomodoroTimerProvider).pomodoroTime;
 
-                      print("Time : $time Short Break : $shortBreak");
-
-                      final timeInMinutes = time?.inMinutes;
-                      final timeInSeconds = time!.inSeconds % 60;
-
-                      return Text("$timeInMinutes:$timeInSeconds",
-                              style: context.textTheme.titleMedium
-                                  ?.copyWith(fontSize: 40.0));
+                      return Text(time!.toClockFormat(),
+                          style: context.textTheme.titleMedium
+                              ?.copyWith(fontSize: 40.0));
                     },
                   ),
-                 pomodoroTimerType==PomodoroTimerType.shortBreak ? const Text("Short Break") : const Text("Focus"),
+                  pomodoroTimerType == PomodoroTimerType.focusSession
+                      ? Text(
+                          "Focus Session",
+                        )
+                      : pomodoroTimerType == PomodoroTimerType.shortBreak
+                          ? Text(
+                              "Short Break",
+                            )
+                          : Text("Long Break"),
                 ],
               )),
             ],

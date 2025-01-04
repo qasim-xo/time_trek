@@ -6,6 +6,8 @@ import 'package:project_management_app/features/pomodoro/providers/pomodoro_sett
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_settings_sheet_widget.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_timer_widget.dart';
+import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
+import 'package:project_management_app/shared/widgets/floating_pomodoro_timer_widget.dart';
 
 @RoutePage()
 class PomodoroScreen extends ConsumerStatefulWidget {
@@ -16,17 +18,18 @@ class PomodoroScreen extends ConsumerStatefulWidget {
 }
 
 class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
-
   @override
   void initState() {
-  
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    
-    final isRunning = ref.watch(pomodoroTimerProvider).isRunning; 
+    final taskId = ref.watch(pomodoroTimerProvider).taskId;
+    final isRunning = ref.watch(pomodoroTimerProvider).isRunning;
     final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak;
+    final isWidgetActive =
+        ref.watch(floatingPomodoroTimerProvider).isWidgetActive;
 
     debugPrint("screen short break : $shortBreak");
     return Scaffold(
@@ -43,13 +46,19 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(onPressed: isRunning == false ? () {
-                    ref.read(pomodoroTimerProvider.notifier).startFocusSession(); 
-                  } : () {
-                    ref.read(pomodoroTimerProvider.notifier).pauseTimer();
-                  }
-                  
-                  , child: isRunning ? Text('Pause') : Text('Start')) ,
+                  ElevatedButton(
+                      onPressed: isRunning == false
+                          ? () {
+                              ref
+                                  .read(pomodoroTimerProvider.notifier)
+                                  .startFocusSession();
+                            }
+                          : () {
+                              ref
+                                  .read(pomodoroTimerProvider.notifier)
+                                  .pauseTimer();
+                            },
+                      child: isRunning ? Text('Pause') : Text('Start')),
                   OutlinedButton(
                       onPressed: () {
                         showModalBottomSheet(
@@ -60,9 +69,10 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                       },
                       child: const Icon(Icons.settings))
                 ],
-              ), 
-
-              
+              ),
+              isWidgetActive && (taskId != '' || taskId.isNotEmpty)
+                  ? FloatingPomodoroTimerWidget()
+                  : SizedBox.shrink()
             ],
           ),
         ));

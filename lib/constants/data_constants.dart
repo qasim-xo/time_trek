@@ -7,9 +7,3 @@ enum PomodoroTimerType {
   shortBreak,
   longBreak,
 }
-
-enum PomodoroTimerType {
-  focusSession,
-  shortBreak,
-  longBreak,
-}

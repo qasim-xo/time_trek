@@ -52,29 +52,35 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
     state = state.copyWith(focusSession: newFocusSession);
 
     final isRunning = ref.read(pomodoroTimerProvider).isRunning;
-    // final isBreak = ref.read(pomodoroTimerProvider).isBreak; 
+    // final isBreak = ref.read(pomodoroTimerProvider).isBreak;
 
     final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
 
     if (!isRunning && pomodoroTimerType == PomodoroTimerType.focusSession) {
-      ref.read(pomodoroTimerProvider.notifier).setTime(newFocusSession);
+      ref.read(pomodoroTimerProvider.notifier).setPomodoroTime(newFocusSession);
     }
   }
 
   void setShortBreak(Duration newShortBreak) {
     state = state.copyWith(shortBreak: newShortBreak);
 
-     final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
     // final isBreak = ref.read(pomodoroTimerProvider).isBreak;
-     final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
+    final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
     if (!isRunning && pomodoroTimerType == PomodoroTimerType.shortBreak) {
-      ref.read(pomodoroTimerProvider.notifier).setTime(newShortBreak);
+      ref.read(pomodoroTimerProvider.notifier).setPomodoroTime(newShortBreak);
     }
-
   }
 
   void setLongBreak(Duration newLongBreak) {
     state = state.copyWith(longBreak: newLongBreak);
+
+    final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
+    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+
+    if (!isRunning && pomodoroTimerType == PomodoroTimerType.longBreak) {
+      ref.read(pomodoroTimerProvider.notifier).setPomodoroTime(newLongBreak);
+    }
   }
 
   void setLongBreakInterval(int newLongBreakInterval) {
@@ -84,5 +90,4 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
 final pomodoroSettingsProvider =
     NotifierProvider<PomodoroSettingsNotifier, PomodoroSettingsState>(
-   PomodoroSettingsNotifier.new
-);
+        PomodoroSettingsNotifier.new);

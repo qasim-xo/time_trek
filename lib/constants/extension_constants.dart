@@ -6,7 +6,6 @@ import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 import 'package:project_management_app/theme/app_colors.dart';
 
-
 extension BuildContextExtensions on BuildContext {
   double get deviceTopPadding => MediaQuery.of(this).padding.top;
   double get screenHeight => MediaQuery.of(this).size.height;
@@ -92,5 +91,14 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
           priority: taskData.status,
           projectId: taskData.projectId);
     }).toList();
+  }
+}
+
+extension DurationClockFormat on Duration {
+  String toClockFormat() {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(inSeconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }
