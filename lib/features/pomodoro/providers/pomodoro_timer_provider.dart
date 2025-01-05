@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as fln;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
+import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/constants/string_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
+import 'package:project_management_app/main.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
 class PomodoroTimerState {
@@ -66,8 +70,10 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(pomodoroTime: newTime);
   }
 
-  void showFloatingTimerWidget() {
-    ref.read(floatingPomodoroTimerProvider.notifier).setIsWidgetActive(true);
+  void showFloatingTimerWidget(bool isWidgetActive) {
+    ref
+        .read(floatingPomodoroTimerProvider.notifier)
+        .setIsWidgetActive(isWidgetActive);
   }
 
   void startTimer() {
@@ -81,8 +87,9 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   }
 
   void startFocusSession() {
-    showFloatingTimerWidget();
+    showFloatingTimerWidget(true);
     startTimer();
+    // showNotificationWithTimer();
   }
 
   void _onTick(Timer timer) {
@@ -95,6 +102,8 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
     final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
     setPomodoroTime(updatedTime);
+
+    showNotificationWithTimer();
 
     int minutes = updatedTime.inMinutes;
     int seconds = updatedTime.inSeconds % 60;
@@ -164,6 +173,35 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   void pauseTimer() {
     state = state.copyWith(isRunning: false);
     state.timer!.cancel();
+  }
+
+  void resetTimer() {
+    final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
+    pauseTimer();
+    showFloatingTimerWidget(false);
+    state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
+    setPomodoroTime(focusSession);
+  }
+
+  void showNotificationWithTimer() async {
+    fln.AndroidNotificationDetails androidPlatformChannelSpecifics =
+        fln.AndroidNotificationDetails(
+      'timer_channel',
+      'Timer Notifications',
+      importance: fln.Importance.low,
+      priority: fln.Priority.high,
+      ongoing: true, // Keeps the notification persistent
+    );
+
+    fln.NotificationDetails platformChannelSpecifics =
+        fln.NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Pomodoro Timer',
+      state.pomodoroTime?.toClockFormat(),
+      platformChannelSpecifics,
+    );
   }
 }
 

@@ -84,8 +84,35 @@ class _ShowTaskScreenState extends ConsumerState<ShowTaskScreen> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text("My Super title"),
-                                      content: Text("Hello World"),
+                                      title: Text("Reset Timer?"),
+                                      content: Text(
+                                          "Do you want to reset the current running timer to proceed using the timer for the clicked task?"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              context.router.maybePop();
+                                            },
+                                            child: Text("No")),
+                                        TextButton(
+                                            onPressed: () {
+                                              ref
+                                                  .read(pomodoroTimerProvider
+                                                      .notifier)
+                                                  .resetTimer();
+
+                                              ref
+                                                  .read(pomodoroTimerProvider
+                                                      .notifier)
+                                                  .setTaskIdAndProjectIdTimerIsRunningFor(
+                                                      tasks[index].taskId);
+
+                                              context.router
+                                                  .push(const PomodoroRoute());
+
+                                              context.router.maybePop();
+                                            },
+                                            child: Text("Yes"))
+                                      ],
                                     );
                                   });
                             },

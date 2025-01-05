@@ -16,6 +16,12 @@ class PomodoroTimerWidget extends ConsumerWidget {
     final pomodoroTimerType =
         ref.watch(pomodoroTimerProvider).pomodoroTimerType;
 
+    final time = ref.watch(pomodoroTimerProvider).pomodoroTime;
+    final focusSession =
+        ref.watch(pomodoroSettingsProvider).focusSession.inSeconds;
+    final longBreak = ref.watch(pomodoroSettingsProvider).longBreak.inSeconds;
+    final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak.inSeconds;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -27,24 +33,9 @@ class PomodoroTimerWidget extends ConsumerWidget {
                 child: SizedBox(
                   width: 200,
                   height: 200,
-                  child: Consumer(
-                    builder:
-                        (BuildContext context, WidgetRef ref, Widget? child) {
-                      double progress = 0;
-                      final time =
-                          ref.watch(pomodoroTimerProvider).pomodoroTime;
-                      final focusSession = ref
-                          .watch(pomodoroSettingsProvider)
-                          .focusSession
-                          .inSeconds;
-                      final longBreak = ref
-                          .watch(pomodoroSettingsProvider)
-                          .longBreak
-                          .inSeconds;
-                      final shortBreak = ref
-                          .watch(pomodoroSettingsProvider)
-                          .shortBreak
-                          .inSeconds;
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      double progress = 0.0;
 
                       if (pomodoroTimerType == PomodoroTimerType.focusSession) {
                         progress = (time!.inSeconds) / focusSession;
@@ -69,17 +60,9 @@ class PomodoroTimerWidget extends ConsumerWidget {
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Consumer(
-                    builder:
-                        (BuildContext context, WidgetRef ref, Widget? child) {
-                      final time =
-                          ref.watch(pomodoroTimerProvider).pomodoroTime;
-
-                      return Text(time!.toClockFormat(),
-                          style: context.textTheme.titleMedium
-                              ?.copyWith(fontSize: 40.0));
-                    },
-                  ),
+                  Text(time!.toClockFormat(),
+                      style: context.textTheme.titleMedium
+                          ?.copyWith(fontSize: 40.0)),
                   pomodoroTimerType == PomodoroTimerType.focusSession
                       ? Text(
                           "Focus Session",
