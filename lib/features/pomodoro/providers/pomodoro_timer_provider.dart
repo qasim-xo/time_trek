@@ -64,48 +64,61 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(pomodoroTime: newTime);
   }
 
-  void startFocusSession() {
+  void showFloatingTimerWidget() {
     ref.read(floatingPomodoroTimerProvider.notifier).setIsWidgetActive(true);
+  }
 
+  void startTimer() {
     state = state.copyWith(
       isRunning: true,
       timer: Timer.periodic(
         const Duration(seconds: 1),
-        (timer) {
-          if (state.pomodoroTime == null) {
-            timer.cancel();
-            state = state.copyWith(isRunning: false);
-            return;
-          }
-
-          final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
-          state = state.copyWith(pomodoroTime: updatedTime);
-
-          int minutes = updatedTime.inMinutes;
-          int seconds = updatedTime.inSeconds % 60;
-
-          if (minutes <= 0 && seconds <= 0) {
-            if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
-              state.countFocusSessions = state.countFocusSessions! + 1;
-              state.copyWith(countFocusSessions: state.countFocusSessions);
-            }
-
-            timer.cancel();
-
-            state = state.copyWith(isRunning: false);
-            final longBreakInterval =
-                ref.read(pomodoroSettingsProvider).longBreakInterval;
-
-            if (state.countFocusSessions! % longBreakInterval == 0) {
-              startLongBreak();
-            } else {
-              debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
-              startShortBreak();
-            }
-          }
-        },
+        (timer) => _onTick(timer),
       ),
     );
+  }
+
+  void startFocusSession() {
+    showFloatingTimerWidget();
+    startTimer();
+  }
+
+  void _onTick(Timer timer) {
+    if (state.pomodoroTime == null) {
+      timer.cancel();
+      setIsRunning(false);
+      return;
+    }
+
+    final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
+    setPomodoroTime(updatedTime);
+
+    int minutes = updatedTime.inMinutes;
+    int seconds = updatedTime.inSeconds % 60;
+
+    if (minutes <= 0 && seconds <= 0) {
+      _handleSessionEnd(timer);
+    }
+  }
+
+  void _handleSessionEnd(Timer timer) {
+    if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
+      state.countFocusSessions = state.countFocusSessions! + 1;
+      state.copyWith(countFocusSessions: state.countFocusSessions);
+    }
+
+    timer.cancel();
+
+    setIsRunning(false);
+    final longBreakInterval =
+        ref.read(pomodoroSettingsProvider).longBreakInterval;
+
+    if (state.countFocusSessions! % longBreakInterval == 0) {
+      startLongBreak();
+    } else {
+      debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
+      startShortBreak();
+    }
   }
 
   void startShortBreak() {
