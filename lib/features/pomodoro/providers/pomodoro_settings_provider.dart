@@ -1,6 +1,8 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
+import 'package:project_management_app/constants/string_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 
 class PomodoroSettingsState {
@@ -8,25 +10,27 @@ class PomodoroSettingsState {
   Duration shortBreak;
   Duration longBreak;
   int longBreakInterval;
+  bool isPlaySound;
 
-  PomodoroSettingsState({
-    required this.focusSession,
-    required this.shortBreak,
-    required this.longBreak,
-    required this.longBreakInterval,
-  });
+  PomodoroSettingsState(
+      {required this.focusSession,
+      required this.shortBreak,
+      required this.longBreak,
+      required this.longBreakInterval,
+      required this.isPlaySound});
 
-  PomodoroSettingsState copyWith({
-    Duration? focusSession,
-    Duration? shortBreak,
-    Duration? longBreak,
-    int? longBreakInterval,
-  }) {
+  PomodoroSettingsState copyWith(
+      {Duration? focusSession,
+      Duration? shortBreak,
+      Duration? longBreak,
+      int? longBreakInterval,
+      bool? isPlaySound}) {
     return PomodoroSettingsState(
       focusSession: focusSession ?? this.focusSession,
       shortBreak: shortBreak ?? this.shortBreak,
       longBreak: longBreak ?? this.longBreak,
       longBreakInterval: longBreakInterval ?? this.longBreakInterval,
+      isPlaySound: isPlaySound ?? this.isPlaySound,
     );
   }
 
@@ -36,6 +40,7 @@ class PomodoroSettingsState {
       shortBreak: const Duration(minutes: 5),
       longBreak: const Duration(minutes: 15),
       longBreakInterval: 4,
+      isPlaySound: true,
     );
   }
 }
@@ -85,6 +90,24 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
   void setLongBreakInterval(int newLongBreakInterval) {
     state = state.copyWith(longBreakInterval: newLongBreakInterval);
+  }
+
+  void setIsPlaySound(bool isPlaySound) {
+    state = state.copyWith(isPlaySound: isPlaySound);
+  }
+
+  void playClockTickSound() {
+    AudioPlayer player = AudioPlayer();
+    if (state.isPlaySound) {
+      player.play(AssetSource(clockTickSound));
+    } else {
+      player.stop();
+    }
+  }
+
+  void playAlarmSound() {
+    AudioPlayer player = AudioPlayer();
+    player.play(AssetSource(alarmSound));
   }
 }
 

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
+import 'package:project_management_app/constants/string_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
@@ -85,10 +87,11 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void _onTick(Timer timer) {
     if (state.pomodoroTime == null) {
-      timer.cancel();
-      setIsRunning(false);
+      pauseTimer();
       return;
     }
+
+    playClockTickSound();
 
     final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
     setPomodoroTime(updatedTime);
@@ -101,15 +104,21 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     }
   }
 
+  void playClockTickSound() {
+    ref.read(pomodoroSettingsProvider.notifier).playClockTickSound();
+  }
+
+  void playAlarmSoundOnSessionEnd() {
+    ref.read(pomodoroSettingsProvider.notifier).playAlarmSound();
+  }
+
   void _handleSessionEnd(Timer timer) {
     if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       state.countFocusSessions = state.countFocusSessions! + 1;
       state.copyWith(countFocusSessions: state.countFocusSessions);
     }
-
-    timer.cancel();
-
-    setIsRunning(false);
+    playAlarmSoundOnSessionEnd();
+    pauseTimer();
     final longBreakInterval =
         ref.read(pomodoroSettingsProvider).longBreakInterval;
 

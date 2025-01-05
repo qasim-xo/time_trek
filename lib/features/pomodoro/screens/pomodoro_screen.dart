@@ -31,10 +31,23 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
     final isWidgetActive =
         ref.watch(floatingPomodoroTimerProvider).isWidgetActive;
 
+    final isPlaySound = ref.watch(pomodoroSettingsProvider).isPlaySound;
+
     debugPrint("screen short break : $shortBreak");
     return Scaffold(
         appBar: AppBar(
           title: const Text('Pomodoro'),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  ref
+                      .read(pomodoroSettingsProvider.notifier)
+                      .setIsPlaySound(!isPlaySound);
+                },
+                icon: isPlaySound
+                    ? Icon(Icons.volume_up)
+                    : Icon(Icons.volume_off))
+          ],
         ),
         body: Padding(
           padding: homePadding,
