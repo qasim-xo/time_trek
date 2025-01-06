@@ -63,8 +63,8 @@ class FloatingPomodoroTimerWidget extends ConsumerWidget {
                                   .pauseTimer();
                             },
                       icon: isRunning
-                          ? Icon(Icons.play_arrow_rounded)
-                          : Icon(Icons.pause)),
+                          ? Icon(Icons.pause)
+                          : Icon(Icons.play_arrow_rounded)),
                 ),
               )
             ],

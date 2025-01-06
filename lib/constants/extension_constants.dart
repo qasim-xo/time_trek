@@ -59,7 +59,9 @@ extension TaskToCompanion on Task {
         taskDesc: Value(taskDesc),
         dueDate: Value(dueDate),
         status: Value(priority),
-        projectId: Value(projectId));
+        projectId: Value(projectId), 
+        isCompleted: Value(isCompleted)
+        );
   }
 }
 
@@ -89,7 +91,9 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
           taskDesc: taskData.taskDesc,
           dueDate: taskData.dueDate,
           priority: taskData.status,
-          projectId: taskData.projectId);
+          projectId: taskData.projectId, 
+          isCompleted: taskData.isCompleted
+          );
     }).toList();
   }
 }

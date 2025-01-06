@@ -5,15 +5,16 @@ import 'package:project_management_app/model/task/task.dart';
 
 class HomeState {
   int filterValue;
+  bool isCompleted; 
 
-  HomeState({required this.filterValue});
+  HomeState({required this.filterValue,required this.isCompleted});
 
-  HomeState copyWith({int? filterValue}) {
-    return HomeState(filterValue: filterValue ?? this.filterValue);
+  HomeState copyWith({int? filterValue, bool? isCompleted}) {
+    return HomeState(filterValue: filterValue ?? this.filterValue, isCompleted: isCompleted??this.isCompleted);
   }
 
   factory HomeState.initial() {
-    return HomeState(filterValue: -1);
+    return HomeState(filterValue: -1, isCompleted: false);
   }
 }
 
@@ -26,6 +27,13 @@ class HomeNotifier extends Notifier<HomeState> {
   void setFilterValue(int value) {
     state = state.copyWith(filterValue: value);
     filterTaskList();
+  }
+
+
+  void toggleIsCompleted (Task task, bool? newValue) 
+  {
+    //  state = state.copyWith(isCompleted: !state.isCompleted);
+     ref.read(taskProvider.notifier).updateTask(task.copyWith(isCompleted: newValue??false));
   }
 
   void filterTaskList() {

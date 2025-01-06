@@ -9,6 +9,7 @@ class TaskDatabaseTable extends Table {
   TextColumn get taskTitle => text()();
   TextColumn get taskDesc => text()();
   DateTimeColumn get dueDate => dateTime()();
+  BoolColumn get isCompleted => boolean()();
   IntColumn get status => intEnum<Priority>()();
   TextColumn get projectId =>
       text().references(ProjectDatabaseTable, #projectId)();

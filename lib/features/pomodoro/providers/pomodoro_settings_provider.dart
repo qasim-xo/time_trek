@@ -69,7 +69,6 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
   void setShortBreak(Duration newShortBreak) {
     state = state.copyWith(shortBreak: newShortBreak);
-
     final isRunning = ref.read(pomodoroTimerProvider).isRunning;
     // final isBreak = ref.read(pomodoroTimerProvider).isBreak;
     final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;

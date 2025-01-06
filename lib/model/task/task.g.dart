@@ -13,6 +13,7 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       dueDate: DateTime.parse(json['dueDate'] as String),
       priority: $enumDecode(_$PriorityEnumMap, json['priority']),
       projectId: json['projectId'] as String,
+      isCompleted: json['isCompleted'] as bool,
     );
 
 Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
       'dueDate': instance.dueDate.toIso8601String(),
       'priority': _$PriorityEnumMap[instance.priority]!,
       'projectId': instance.projectId,
+      'isCompleted': instance.isCompleted,
     };
 
 const _$PriorityEnumMap = {

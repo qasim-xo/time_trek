@@ -137,7 +137,9 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       taskDesc: taskDescriptionController.text,
                       dueDate: selectedDate,
                       priority: selectedOption,
-                      projectId: widget.task!.projectId);
+                      projectId: widget.task!.projectId, 
+                      isCompleted: widget.task!.isCompleted
+                      );
                   ref.read(taskProvider.notifier).updateTask(updatedTask);
                 } else {
                   ref

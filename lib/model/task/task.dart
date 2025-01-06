@@ -13,6 +13,7 @@ abstract class Task with _$Task {
     required DateTime dueDate,
     required Priority priority,
     required String projectId,
+    required bool isCompleted, 
   }) = _Task;
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
 }

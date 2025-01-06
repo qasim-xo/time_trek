@@ -268,6 +268,15 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
   late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
       'due_date', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _isCompletedMeta =
+      const VerificationMeta('isCompleted');
+  @override
+  late final GeneratedColumn<bool> isCompleted = GeneratedColumn<bool>(
+      'is_completed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_completed" IN (0, 1))'));
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumnWithTypeConverter<Priority, int> status =
@@ -284,8 +293,16 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES project_database_table (project_id)'));
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, taskId, taskTitle, taskDesc, dueDate, status, projectId];
+  List<GeneratedColumn> get $columns => [
+        id,
+        taskId,
+        taskTitle,
+        taskDesc,
+        dueDate,
+        isCompleted,
+        status,
+        projectId
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -324,6 +341,14 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
     } else if (isInserting) {
       context.missing(_dueDateMeta);
     }
+    if (data.containsKey('is_completed')) {
+      context.handle(
+          _isCompletedMeta,
+          isCompleted.isAcceptableOrUnknown(
+              data['is_completed']!, _isCompletedMeta));
+    } else if (isInserting) {
+      context.missing(_isCompletedMeta);
+    }
     context.handle(_statusMeta, const VerificationResult.success());
     if (data.containsKey('project_id')) {
       context.handle(_projectIdMeta,
@@ -350,6 +375,8 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
           .read(DriftSqlType.string, data['${effectivePrefix}task_desc'])!,
       dueDate: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}due_date'])!,
+      isCompleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_completed'])!,
       status: $TaskDatabaseTableTable.$converterstatus.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
@@ -374,6 +401,7 @@ class TaskDatabaseTableData extends DataClass
   final String taskTitle;
   final String taskDesc;
   final DateTime dueDate;
+  final bool isCompleted;
   final Priority status;
   final String projectId;
   const TaskDatabaseTableData(
@@ -382,6 +410,7 @@ class TaskDatabaseTableData extends DataClass
       required this.taskTitle,
       required this.taskDesc,
       required this.dueDate,
+      required this.isCompleted,
       required this.status,
       required this.projectId});
   @override
@@ -392,6 +421,7 @@ class TaskDatabaseTableData extends DataClass
     map['task_title'] = Variable<String>(taskTitle);
     map['task_desc'] = Variable<String>(taskDesc);
     map['due_date'] = Variable<DateTime>(dueDate);
+    map['is_completed'] = Variable<bool>(isCompleted);
     {
       map['status'] =
           Variable<int>($TaskDatabaseTableTable.$converterstatus.toSql(status));
@@ -407,6 +437,7 @@ class TaskDatabaseTableData extends DataClass
       taskTitle: Value(taskTitle),
       taskDesc: Value(taskDesc),
       dueDate: Value(dueDate),
+      isCompleted: Value(isCompleted),
       status: Value(status),
       projectId: Value(projectId),
     );
@@ -421,6 +452,7 @@ class TaskDatabaseTableData extends DataClass
       taskTitle: serializer.fromJson<String>(json['taskTitle']),
       taskDesc: serializer.fromJson<String>(json['taskDesc']),
       dueDate: serializer.fromJson<DateTime>(json['dueDate']),
+      isCompleted: serializer.fromJson<bool>(json['isCompleted']),
       status: $TaskDatabaseTableTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
       projectId: serializer.fromJson<String>(json['projectId']),
@@ -435,6 +467,7 @@ class TaskDatabaseTableData extends DataClass
       'taskTitle': serializer.toJson<String>(taskTitle),
       'taskDesc': serializer.toJson<String>(taskDesc),
       'dueDate': serializer.toJson<DateTime>(dueDate),
+      'isCompleted': serializer.toJson<bool>(isCompleted),
       'status': serializer
           .toJson<int>($TaskDatabaseTableTable.$converterstatus.toJson(status)),
       'projectId': serializer.toJson<String>(projectId),
@@ -447,6 +480,7 @@ class TaskDatabaseTableData extends DataClass
           String? taskTitle,
           String? taskDesc,
           DateTime? dueDate,
+          bool? isCompleted,
           Priority? status,
           String? projectId}) =>
       TaskDatabaseTableData(
@@ -455,6 +489,7 @@ class TaskDatabaseTableData extends DataClass
         taskTitle: taskTitle ?? this.taskTitle,
         taskDesc: taskDesc ?? this.taskDesc,
         dueDate: dueDate ?? this.dueDate,
+        isCompleted: isCompleted ?? this.isCompleted,
         status: status ?? this.status,
         projectId: projectId ?? this.projectId,
       );
@@ -465,6 +500,8 @@ class TaskDatabaseTableData extends DataClass
       taskTitle: data.taskTitle.present ? data.taskTitle.value : this.taskTitle,
       taskDesc: data.taskDesc.present ? data.taskDesc.value : this.taskDesc,
       dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      isCompleted:
+          data.isCompleted.present ? data.isCompleted.value : this.isCompleted,
       status: data.status.present ? data.status.value : this.status,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
     );
@@ -478,6 +515,7 @@ class TaskDatabaseTableData extends DataClass
           ..write('taskTitle: $taskTitle, ')
           ..write('taskDesc: $taskDesc, ')
           ..write('dueDate: $dueDate, ')
+          ..write('isCompleted: $isCompleted, ')
           ..write('status: $status, ')
           ..write('projectId: $projectId')
           ..write(')'))
@@ -485,8 +523,8 @@ class TaskDatabaseTableData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, taskId, taskTitle, taskDesc, dueDate, status, projectId);
+  int get hashCode => Object.hash(
+      id, taskId, taskTitle, taskDesc, dueDate, isCompleted, status, projectId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -496,6 +534,7 @@ class TaskDatabaseTableData extends DataClass
           other.taskTitle == this.taskTitle &&
           other.taskDesc == this.taskDesc &&
           other.dueDate == this.dueDate &&
+          other.isCompleted == this.isCompleted &&
           other.status == this.status &&
           other.projectId == this.projectId);
 }
@@ -507,6 +546,7 @@ class TaskDatabaseTableCompanion
   final Value<String> taskTitle;
   final Value<String> taskDesc;
   final Value<DateTime> dueDate;
+  final Value<bool> isCompleted;
   final Value<Priority> status;
   final Value<String> projectId;
   const TaskDatabaseTableCompanion({
@@ -515,6 +555,7 @@ class TaskDatabaseTableCompanion
     this.taskTitle = const Value.absent(),
     this.taskDesc = const Value.absent(),
     this.dueDate = const Value.absent(),
+    this.isCompleted = const Value.absent(),
     this.status = const Value.absent(),
     this.projectId = const Value.absent(),
   });
@@ -524,12 +565,14 @@ class TaskDatabaseTableCompanion
     required String taskTitle,
     required String taskDesc,
     required DateTime dueDate,
+    required bool isCompleted,
     required Priority status,
     required String projectId,
   })  : taskId = Value(taskId),
         taskTitle = Value(taskTitle),
         taskDesc = Value(taskDesc),
         dueDate = Value(dueDate),
+        isCompleted = Value(isCompleted),
         status = Value(status),
         projectId = Value(projectId);
   static Insertable<TaskDatabaseTableData> custom({
@@ -538,6 +581,7 @@ class TaskDatabaseTableCompanion
     Expression<String>? taskTitle,
     Expression<String>? taskDesc,
     Expression<DateTime>? dueDate,
+    Expression<bool>? isCompleted,
     Expression<int>? status,
     Expression<String>? projectId,
   }) {
@@ -547,6 +591,7 @@ class TaskDatabaseTableCompanion
       if (taskTitle != null) 'task_title': taskTitle,
       if (taskDesc != null) 'task_desc': taskDesc,
       if (dueDate != null) 'due_date': dueDate,
+      if (isCompleted != null) 'is_completed': isCompleted,
       if (status != null) 'status': status,
       if (projectId != null) 'project_id': projectId,
     });
@@ -558,6 +603,7 @@ class TaskDatabaseTableCompanion
       Value<String>? taskTitle,
       Value<String>? taskDesc,
       Value<DateTime>? dueDate,
+      Value<bool>? isCompleted,
       Value<Priority>? status,
       Value<String>? projectId}) {
     return TaskDatabaseTableCompanion(
@@ -566,6 +612,7 @@ class TaskDatabaseTableCompanion
       taskTitle: taskTitle ?? this.taskTitle,
       taskDesc: taskDesc ?? this.taskDesc,
       dueDate: dueDate ?? this.dueDate,
+      isCompleted: isCompleted ?? this.isCompleted,
       status: status ?? this.status,
       projectId: projectId ?? this.projectId,
     );
@@ -589,6 +636,9 @@ class TaskDatabaseTableCompanion
     if (dueDate.present) {
       map['due_date'] = Variable<DateTime>(dueDate.value);
     }
+    if (isCompleted.present) {
+      map['is_completed'] = Variable<bool>(isCompleted.value);
+    }
     if (status.present) {
       map['status'] = Variable<int>(
           $TaskDatabaseTableTable.$converterstatus.toSql(status.value));
@@ -607,6 +657,7 @@ class TaskDatabaseTableCompanion
           ..write('taskTitle: $taskTitle, ')
           ..write('taskDesc: $taskDesc, ')
           ..write('dueDate: $dueDate, ')
+          ..write('isCompleted: $isCompleted, ')
           ..write('status: $status, ')
           ..write('projectId: $projectId')
           ..write(')'))
@@ -866,6 +917,7 @@ typedef $$TaskDatabaseTableTableCreateCompanionBuilder
   required String taskTitle,
   required String taskDesc,
   required DateTime dueDate,
+  required bool isCompleted,
   required Priority status,
   required String projectId,
 });
@@ -876,6 +928,7 @@ typedef $$TaskDatabaseTableTableUpdateCompanionBuilder
   Value<String> taskTitle,
   Value<String> taskDesc,
   Value<DateTime> dueDate,
+  Value<bool> isCompleted,
   Value<Priority> status,
   Value<String> projectId,
 });
@@ -923,6 +976,9 @@ class $$TaskDatabaseTableTableFilterComposer
 
   ColumnFilters<DateTime> get dueDate => $composableBuilder(
       column: $table.dueDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isCompleted => $composableBuilder(
+      column: $table.isCompleted, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<Priority, Priority, int> get status =>
       $composableBuilder(
@@ -974,6 +1030,9 @@ class $$TaskDatabaseTableTableOrderingComposer
   ColumnOrderings<DateTime> get dueDate => $composableBuilder(
       column: $table.dueDate, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<bool> get isCompleted => $composableBuilder(
+      column: $table.isCompleted, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get status => $composableBuilder(
       column: $table.status, builder: (column) => ColumnOrderings(column));
 
@@ -1022,6 +1081,9 @@ class $$TaskDatabaseTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get dueDate =>
       $composableBuilder(column: $table.dueDate, builder: (column) => column);
+
+  GeneratedColumn<bool> get isCompleted => $composableBuilder(
+      column: $table.isCompleted, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Priority, int> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
@@ -1078,6 +1140,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             Value<String> taskTitle = const Value.absent(),
             Value<String> taskDesc = const Value.absent(),
             Value<DateTime> dueDate = const Value.absent(),
+            Value<bool> isCompleted = const Value.absent(),
             Value<Priority> status = const Value.absent(),
             Value<String> projectId = const Value.absent(),
           }) =>
@@ -1087,6 +1150,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             taskTitle: taskTitle,
             taskDesc: taskDesc,
             dueDate: dueDate,
+            isCompleted: isCompleted,
             status: status,
             projectId: projectId,
           ),
@@ -1096,6 +1160,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             required String taskTitle,
             required String taskDesc,
             required DateTime dueDate,
+            required bool isCompleted,
             required Priority status,
             required String projectId,
           }) =>
@@ -1105,6 +1170,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             taskTitle: taskTitle,
             taskDesc: taskDesc,
             dueDate: dueDate,
+            isCompleted: isCompleted,
             status: status,
             projectId: projectId,
           ),

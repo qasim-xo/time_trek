@@ -5,7 +5,10 @@ import 'package:project_management_app/constants/ui_constants.dart';
 import 'package:project_management_app/features/add_show_project/providers/project_provider.dart';
 import 'package:project_management_app/features/add_show_project/widgets/project_card_widget.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
+import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/router/app_router.dart';
+import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
+import 'package:project_management_app/shared/widgets/floating_pomodoro_timer_widget.dart';
 
 @RoutePage()
 class ShowProjectScreen extends ConsumerStatefulWidget {
@@ -28,32 +31,46 @@ class _ShowProjectScreenState extends ConsumerState<ShowProjectScreen> {
   @override
   Widget build(BuildContext context) {
     final projects = ref.watch(projectProvider).projectList;
+   
+
+    final isWidgetActive =
+        ref.watch(floatingPomodoroTimerProvider).isWidgetActive;
+    final taskId = ref.watch(pomodoroTimerProvider).taskId;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Projects'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.router.push(AddProjectRoute());
-        },
-        child: const Icon(Icons.add),
+        actions: [
+          IconButton(onPressed: (){
+            context.router.push(AddProjectRoute()); 
+          }, icon: Icon(Icons.add_box))
+        ],
       ),
       body: Padding(
         padding: homePadding,
-        child: ListView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-                onTap: () {
-                  ref
-                      .read(taskProvider.notifier)
-                      .setProjectId(projects[index].projectId);
-
-                  context.router.push(
-                      ShowTaskRoute(projectId: projects[index].projectId));
-                },
-                child: ProjectCardWidget(project: projects[index]));
-          },
-          itemCount: projects.length,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: 
+          [
+            ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                  onTap: () {
+                    ref
+                        .read(taskProvider.notifier)
+                        .setProjectId(projects[index].projectId);
+          
+                    context.router.push(
+                        ShowTaskRoute(projectId: projects[index].projectId));
+                  },
+                  child: ProjectCardWidget(project: projects[index]));
+            },
+            itemCount: projects.length,
+          ), 
+           isWidgetActive && (taskId != '' || taskId.isNotEmpty)
+              ? SizedBox(height: 102, child: FloatingPomodoroTimerWidget())
+              : SizedBox.shrink()
+          ]
         ),
       ),
     );

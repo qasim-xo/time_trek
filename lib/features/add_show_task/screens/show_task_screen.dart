@@ -41,6 +41,8 @@ class _ShowTaskScreenState extends ConsumerState<ShowTaskScreen> {
         ref.watch(floatingPomodoroTimerProvider).isWidgetActive;
     final taskId = ref.watch(pomodoroTimerProvider).taskId;
 
+   
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tasks'),
@@ -66,7 +68,8 @@ class _ShowTaskScreenState extends ConsumerState<ShowTaskScreen> {
       ),
       body: Padding(
         padding: homePadding,
-        child: Stack(alignment: Alignment.bottomCenter, children: [
+        child: Stack(
+          alignment: Alignment.bottomCenter, children: [
           ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(

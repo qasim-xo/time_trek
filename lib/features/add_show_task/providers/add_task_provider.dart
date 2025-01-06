@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
+import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 // Adjust path as needed
@@ -69,6 +70,7 @@ class TaskNotifier extends Notifier<TaskState> {
       dueDate: state.selectedDate,
       priority: state.priority,
       projectId: state.projectId,
+      isCompleted: false
     );
 
     state = state.copyWith(
@@ -95,6 +97,11 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void deleteTask(Task task) {
+    final isRunning = ref.read(pomodoroTimerProvider).isRunning; 
+    if (isRunning==true)
+    {
+      ref.read(pomodoroTimerProvider.notifier).resetTimer(); 
+    }
     int index = state.filteredTaskList.indexOf(task);
     final deletedTaskListItem = state.filteredTaskList.toList();
     deletedTaskListItem.removeAt(index);
