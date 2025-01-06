@@ -1,15 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/ui_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_settings_sheet_widget.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_timer_widget.dart';
-import 'package:project_management_app/main.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
-import 'package:project_management_app/shared/widgets/floating_pomodoro_timer_widget.dart';
 
 @RoutePage()
 class PomodoroScreen extends ConsumerStatefulWidget {
@@ -68,24 +65,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                   .read(pomodoroTimerProvider.notifier)
                                   .startFocusSession();
 
-                              // const AndroidNotificationDetails
-                              //     androidNotificationDetails =
-                              //     AndroidNotificationDetails(
-                              //         'your channel id', 'your channel name',
-                              //         channelDescription:
-                              //             'your channel description',
-                              //         importance: Importance.max,
-                              //         priority: Priority.high,
-                              //         ticker: 'ticker');
-                              // const NotificationDetails notificationDetails =
-                              //     NotificationDetails(
-                              //         android: androidNotificationDetails);
-                              // await flutterLocalNotificationsPlugin.show(
-                              //     0,
-                              //     'plain title',
-                              //     'plain body',
-                              //     notificationDetails,
-                              //     payload: 'item x');
+                         
                             }
                           : () {
                               ref
@@ -104,9 +84,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                       child: const Icon(Icons.settings))
                 ],
               ),
-              isWidgetActive && (taskId != '' || taskId.isNotEmpty)
-                  ? FloatingPomodoroTimerWidget()
-                  : SizedBox.shrink()
+              // isWidgetActive && (taskId != '' || taskId.isNotEmpty)
+              //     ? FloatingPomodoroTimerWidget()
+              //     : SizedBox.shrink()
             ],
           ),
         ));

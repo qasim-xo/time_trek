@@ -17,10 +17,11 @@ class PomodoroTimerWidget extends ConsumerWidget {
         ref.watch(pomodoroTimerProvider).pomodoroTimerType;
 
     final time = ref.watch(pomodoroTimerProvider).pomodoroTime;
-    final focusSession =
-        ref.watch(pomodoroSettingsProvider).focusSession.inSeconds;
-    final longBreak = ref.watch(pomodoroSettingsProvider).longBreak.inSeconds;
-    final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak.inSeconds;
+    // final focusSession =
+    //     ref.watch(pomodoroSettingsProvider).focusSession.inSeconds;
+    // final longBreak = ref.watch(pomodoroSettingsProvider).longBreak.inSeconds;
+    // final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak.inSeconds;
+    final selectedPomodoroTime = ref.read(pomodoroTimerProvider).selectedPomodoroTime; 
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -35,16 +36,21 @@ class PomodoroTimerWidget extends ConsumerWidget {
                   height: 200,
                   child: Builder(
                     builder: (BuildContext context) {
-                      double progress = 0.0;
+                      double progress = time!.inSeconds/selectedPomodoroTime.inSeconds;
 
-                      if (pomodoroTimerType == PomodoroTimerType.focusSession) {
-                        progress = (time!.inSeconds) / focusSession;
-                      } else if (pomodoroTimerType ==
-                          PomodoroTimerType.shortBreak) {
-                        progress = (time!.inSeconds) / shortBreak;
-                      } else {
-                        progress = (time!.inSeconds) / longBreak;
-                      }
+                    //   if (isRunning)
+                    //   {
+                    //     if (pomodoroTimerType == PomodoroTimerType.focusSession) {
+                    //     progress = (time!.inSeconds) / focusSession;
+                    //   } else if (pomodoroTimerType ==
+                    //       PomodoroTimerType.shortBreak) {
+                    //     progress = (time!.inSeconds) / shortBreak;
+                    //   } else {
+                    //     progress = (time!.inSeconds) / longBreak;
+                    //   }
+                    // }
+
+                     
 
                       return CircularProgressIndicator(
                         strokeCap: StrokeCap.round,

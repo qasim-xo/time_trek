@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as fln;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
-import 'package:project_management_app/constants/string_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
+import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/main.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
@@ -19,6 +18,7 @@ class PomodoroTimerState {
   Timer? timer;
   Duration? pomodoroTime;
   int? countFocusSessions;
+  Duration selectedPomodoroTime; 
 
   PomodoroTimerState(
       {required this.taskId,
@@ -26,7 +26,8 @@ class PomodoroTimerState {
       required this.timer,
       required this.pomodoroTime,
       required this.pomodoroTimerType,
-      required this.countFocusSessions});
+      required this.countFocusSessions, 
+      required this.selectedPomodoroTime});
 
   PomodoroTimerState copyWith(
       {String? taskId,
@@ -35,18 +36,21 @@ class PomodoroTimerState {
       Duration? pomodoroTime,
       bool? isBreak,
       int? countFocusSessions,
+      Duration? selectedPomodoroTime,
       PomodoroTimerType? pomodoroTimerType}) {
     return PomodoroTimerState(
         taskId: taskId ?? this.taskId,
         isRunning: isRunning ?? this.isRunning,
         timer: timer ?? this.timer,
         pomodoroTime: pomodoroTime ?? this.pomodoroTime,
+        selectedPomodoroTime: selectedPomodoroTime ?? this.selectedPomodoroTime,
         pomodoroTimerType: pomodoroTimerType ?? this.pomodoroTimerType,
         countFocusSessions: countFocusSessions ?? this.countFocusSessions);
   }
 
   factory PomodoroTimerState.initial() {
     return PomodoroTimerState(
+        selectedPomodoroTime: Duration(minutes: 25, seconds: 0),
         taskId: '',
         countFocusSessions: 0,
         isRunning: false,
@@ -66,8 +70,14 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(isRunning: newIsRunning);
   }
 
+  void setSelectedPomodoroTime (Duration time)
+  {
+     state = state.copyWith(selectedPomodoroTime: time); 
+  }
+
   void setPomodoroTime(Duration newTime) {
     state = state.copyWith(pomodoroTime: newTime);
+    // setSelectedPomodoroTime(newTime); 
   }
 
   void showFloatingTimerWidget(bool isWidgetActive) {
@@ -89,7 +99,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   void startFocusSession() {
     showFloatingTimerWidget(true);
     startTimer();
-    // showNotificationWithTimer();
+    showNotificationWithTimer();
   }
 
   void _onTick(Timer timer) {
@@ -146,10 +156,12 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     if (state.pomodoroTimerType == PomodoroTimerType.shortBreak) {
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
       setPomodoroTime(focusSession);
+      setSelectedPomodoroTime(focusSession);
     } else if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.shortBreak);
       setPomodoroTime(shortBreak);
+      setSelectedPomodoroTime(shortBreak);
     }
   }
 
@@ -160,9 +172,11 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     if (state.pomodoroTimerType == PomodoroTimerType.longBreak) {
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
       setPomodoroTime(focusSession);
+      setSelectedPomodoroTime(focusSession);
     } else if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.longBreak);
       setPomodoroTime(longBreak);
+      setSelectedPomodoroTime(longBreak);
     }
   }
 
@@ -181,20 +195,23 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     showFloatingTimerWidget(false);
     state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
     setPomodoroTime(focusSession);
+    setSelectedPomodoroTime(focusSession);
   }
 
   void showNotificationWithTimer() async {
-    fln.AndroidNotificationDetails androidPlatformChannelSpecifics =
-        fln.AndroidNotificationDetails(
-      'timer_channel',
-      'Timer Notifications',
-      importance: fln.Importance.low,
-      priority: fln.Priority.high,
-      ongoing: true, // Keeps the notification persistent
-    );
+    // fln.AndroidNotificationDetails androidPlatformChannelSpecifics =
+    //     fln.AndroidNotificationDetails(
+    //   'timer_channel',
+    //   'Timer Notifications',
+    //   importance: fln.Importance.low,
+    //   priority: fln.Priority.high,
+    //   onlyAlertOnce: true,
+    //   ongoing: true, 
+    //   showWhen: false
+    // );
 
     fln.NotificationDetails platformChannelSpecifics =
-        fln.NotificationDetails(android: androidPlatformChannelSpecifics);
+        fln.NotificationDetails(android: NotificationService().androidPlatformChannelSpecifics, iOS: NotificationService().iOSPlatformChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.show(
       0,
