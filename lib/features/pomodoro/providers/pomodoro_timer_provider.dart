@@ -18,7 +18,7 @@ class PomodoroTimerState {
   Timer? timer;
   Duration? pomodoroTime;
   int? countFocusSessions;
-  Duration selectedPomodoroTime; 
+  Duration selectedPomodoroTime;
 
   PomodoroTimerState(
       {required this.taskId,
@@ -26,7 +26,7 @@ class PomodoroTimerState {
       required this.timer,
       required this.pomodoroTime,
       required this.pomodoroTimerType,
-      required this.countFocusSessions, 
+      required this.countFocusSessions,
       required this.selectedPomodoroTime});
 
   PomodoroTimerState copyWith(
@@ -70,14 +70,13 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(isRunning: newIsRunning);
   }
 
-  void setSelectedPomodoroTime (Duration time)
-  {
-     state = state.copyWith(selectedPomodoroTime: time); 
+  void setSelectedPomodoroTime(Duration time) {
+    state = state.copyWith(selectedPomodoroTime: time);
   }
 
   void setPomodoroTime(Duration newTime) {
     state = state.copyWith(pomodoroTime: newTime);
-    // setSelectedPomodoroTime(newTime); 
+    // setSelectedPomodoroTime(newTime);
   }
 
   void showFloatingTimerWidget(bool isWidgetActive) {
@@ -113,7 +112,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
     setPomodoroTime(updatedTime);
 
-    showNotificationWithTimer();
+    // showNotificationWithTimer();
 
     int minutes = updatedTime.inMinutes;
     int seconds = updatedTime.inSeconds % 60;
@@ -191,10 +190,9 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void resetTimer() {
     final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
-    
-      pauseTimer();
-    
-    
+
+    pauseTimer();
+
     showFloatingTimerWidget(false);
     state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
     setPomodoroTime(focusSession);
@@ -209,12 +207,13 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     //   importance: fln.Importance.low,
     //   priority: fln.Priority.high,
     //   onlyAlertOnce: true,
-    //   ongoing: true, 
+    //   ongoing: true,
     //   showWhen: false
     // );
 
-    fln.NotificationDetails platformChannelSpecifics =
-        fln.NotificationDetails(android: NotificationService().androidPlatformChannelSpecifics, iOS: NotificationService().iOSPlatformChannelSpecifics);
+    fln.NotificationDetails platformChannelSpecifics = fln.NotificationDetails(
+        android: NotificationService().androidPlatformChannelSpecifics,
+        iOS: NotificationService().iOSPlatformChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.show(
       0,

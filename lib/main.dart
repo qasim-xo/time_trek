@@ -11,7 +11,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  NotificationService().initialize();
+  // NotificationService().initialize();
 
   runApp(const ProviderScope(child: MyApp()));
 }
