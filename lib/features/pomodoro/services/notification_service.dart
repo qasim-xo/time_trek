@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:project_management_app/constants/string_constants.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -14,6 +15,7 @@ class NotificationService {
       AndroidNotificationDetails('timer_channel', 'Timer Notifications',
           importance: Importance.low,
           priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
           onlyAlertOnce: true,
           ongoing: true,
           showWhen: false);
@@ -46,5 +48,9 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+  }
+
+  void cancelNotification(int notificationId) {
+    flutterLocalNotificationsPlugin.cancel(notificationId);
   }
 }

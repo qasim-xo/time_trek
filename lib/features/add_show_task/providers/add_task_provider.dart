@@ -64,14 +64,13 @@ class TaskNotifier extends Notifier<TaskState> {
   void addTask() {
     var taskId = const Uuid().v4();
     final newTask = Task(
-      taskId: taskId,
-      taskTitle: state.title,
-      taskDesc: state.desc,
-      dueDate: state.selectedDate,
-      priority: state.priority,
-      projectId: state.projectId,
-      isCompleted: false
-    );
+        taskId: taskId,
+        taskTitle: state.title,
+        taskDesc: state.desc,
+        dueDate: state.selectedDate,
+        priority: state.priority,
+        projectId: state.projectId,
+        isCompleted: false);
 
     state = state.copyWith(
         taskList: [...state.taskList, newTask],
@@ -97,10 +96,10 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void deleteTask(Task task) {
-    final isRunning = ref.read(pomodoroTimerProvider).isRunning; 
-    if (isRunning==true)
-    {
-      ref.read(pomodoroTimerProvider.notifier).resetTimer(); 
+    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+    if (isRunning == true &&
+        task.taskId == ref.read(pomodoroTimerProvider).taskId) {
+      ref.read(pomodoroTimerProvider.notifier).resetTimer();
     }
     int index = state.filteredTaskList.indexOf(task);
     final deletedTaskListItem = state.filteredTaskList.toList();

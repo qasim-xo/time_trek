@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
+import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
+import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/model/project/project.dart';
+import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 import 'package:uuid/uuid.dart';
 
@@ -58,6 +61,20 @@ class ProjectNotifier extends Notifier<ProjectState> {
 
   void deleteProject(Project project) {
     int index = state.projectList.indexOf(project);
+    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+    final runningTaskId = ref.read(pomodoroTimerProvider).taskId;
+    final task = ref
+        .read(taskProvider)
+        .taskList
+        .firstWhere((task) => task.taskId == runningTaskId);
+
+    final runningProject = state.projectList
+        .firstWhere((project) => project.projectId == task.projectId);
+
+    if (isRunning == true && project.projectId == runningProject) {
+      ref.read(pomodoroTimerProvider.notifier).resetTimer();
+    }
+
     final deletedProjectListItem = state.projectList.toList();
     deletedProjectListItem.removeAt(index);
 

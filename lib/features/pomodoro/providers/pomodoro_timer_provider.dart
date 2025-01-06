@@ -112,7 +112,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
     setPomodoroTime(updatedTime);
 
-    // showNotificationWithTimer();
+    showNotificationWithTimer();
 
     int minutes = updatedTime.inMinutes;
     int seconds = updatedTime.inSeconds % 60;
@@ -212,8 +212,8 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     // );
 
     fln.NotificationDetails platformChannelSpecifics = fln.NotificationDetails(
-        android: NotificationService().androidPlatformChannelSpecifics,
-        iOS: NotificationService().iOSPlatformChannelSpecifics);
+      android: NotificationService().androidPlatformChannelSpecifics,
+    );
 
     await flutterLocalNotificationsPlugin.show(
       0,
