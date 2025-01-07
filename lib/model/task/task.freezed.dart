@@ -27,6 +27,7 @@ mixin _$Task {
   Priority get priority => throw _privateConstructorUsedError;
   String get projectId => throw _privateConstructorUsedError;
   bool get isCompleted => throw _privateConstructorUsedError;
+  int get totalFocusedSessionsInSeconds => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +46,8 @@ abstract class $TaskCopyWith<$Res> {
       DateTime dueDate,
       Priority priority,
       String projectId,
-      bool isCompleted});
+      bool isCompleted,
+      int totalFocusedSessionsInSeconds});
 }
 
 /// @nodoc
@@ -68,6 +70,7 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
     Object? priority = null,
     Object? projectId = null,
     Object? isCompleted = null,
+    Object? totalFocusedSessionsInSeconds = null,
   }) {
     return _then(_value.copyWith(
       taskId: null == taskId
@@ -98,6 +101,10 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
           ? _value.isCompleted
           : isCompleted // ignore: cast_nullable_to_non_nullable
               as bool,
+      totalFocusedSessionsInSeconds: null == totalFocusedSessionsInSeconds
+          ? _value.totalFocusedSessionsInSeconds
+          : totalFocusedSessionsInSeconds // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -116,7 +123,8 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
       DateTime dueDate,
       Priority priority,
       String projectId,
-      bool isCompleted});
+      bool isCompleted,
+      int totalFocusedSessionsInSeconds});
 }
 
 /// @nodoc
@@ -136,6 +144,7 @@ class __$$TaskImplCopyWithImpl<$Res>
     Object? priority = null,
     Object? projectId = null,
     Object? isCompleted = null,
+    Object? totalFocusedSessionsInSeconds = null,
   }) {
     return _then(_$TaskImpl(
       taskId: null == taskId
@@ -166,6 +175,10 @@ class __$$TaskImplCopyWithImpl<$Res>
           ? _value.isCompleted
           : isCompleted // ignore: cast_nullable_to_non_nullable
               as bool,
+      totalFocusedSessionsInSeconds: null == totalFocusedSessionsInSeconds
+          ? _value.totalFocusedSessionsInSeconds
+          : totalFocusedSessionsInSeconds // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -180,7 +193,8 @@ class _$TaskImpl implements _Task {
       required this.dueDate,
       required this.priority,
       required this.projectId,
-      required this.isCompleted});
+      required this.isCompleted,
+      this.totalFocusedSessionsInSeconds = 0});
 
   factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskImplFromJson(json);
@@ -199,10 +213,13 @@ class _$TaskImpl implements _Task {
   final String projectId;
   @override
   final bool isCompleted;
+  @override
+  @JsonKey()
+  final int totalFocusedSessionsInSeconds;
 
   @override
   String toString() {
-    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId, isCompleted: $isCompleted)';
+    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId, isCompleted: $isCompleted, totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds)';
   }
 
   @override
@@ -221,13 +238,17 @@ class _$TaskImpl implements _Task {
             (identical(other.projectId, projectId) ||
                 other.projectId == projectId) &&
             (identical(other.isCompleted, isCompleted) ||
-                other.isCompleted == isCompleted));
+                other.isCompleted == isCompleted) &&
+            (identical(other.totalFocusedSessionsInSeconds,
+                    totalFocusedSessionsInSeconds) ||
+                other.totalFocusedSessionsInSeconds ==
+                    totalFocusedSessionsInSeconds));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, taskId, taskTitle, taskDesc,
-      dueDate, priority, projectId, isCompleted);
+      dueDate, priority, projectId, isCompleted, totalFocusedSessionsInSeconds);
 
   @JsonKey(ignore: true)
   @override
@@ -251,7 +272,8 @@ abstract class _Task implements Task {
       required final DateTime dueDate,
       required final Priority priority,
       required final String projectId,
-      required final bool isCompleted}) = _$TaskImpl;
+      required final bool isCompleted,
+      final int totalFocusedSessionsInSeconds}) = _$TaskImpl;
 
   factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
 
@@ -269,6 +291,8 @@ abstract class _Task implements Task {
   String get projectId;
   @override
   bool get isCompleted;
+  @override
+  int get totalFocusedSessionsInSeconds;
   @override
   @JsonKey(ignore: true)
   _$$TaskImplCopyWith<_$TaskImpl> get copyWith =>

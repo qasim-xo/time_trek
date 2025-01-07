@@ -1,9 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:project_management_app/constants/data_constants.dart';
-import 'package:project_management_app/constants/extension_constants.dart';
-import 'package:project_management_app/model/project/project.dart';
-import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/dao/project/project_dao.dart';
 import 'package:project_management_app/repository/dao/task/task_dao.dart';
 import 'package:project_management_app/repository/tables/project_table.dart';

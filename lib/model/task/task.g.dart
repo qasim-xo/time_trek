@@ -14,6 +14,8 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       priority: $enumDecode(_$PriorityEnumMap, json['priority']),
       projectId: json['projectId'] as String,
       isCompleted: json['isCompleted'] as bool,
+      totalFocusedSessionsInSeconds:
+          (json['totalFocusedSessionsInSeconds'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
@@ -25,6 +27,7 @@ Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
       'priority': _$PriorityEnumMap[instance.priority]!,
       'projectId': instance.projectId,
       'isCompleted': instance.isCompleted,
+      'totalFocusedSessionsInSeconds': instance.totalFocusedSessionsInSeconds,
     };
 
 const _$PriorityEnumMap = {

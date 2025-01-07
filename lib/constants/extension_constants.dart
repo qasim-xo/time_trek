@@ -60,7 +60,8 @@ extension TaskToCompanion on Task {
         dueDate: Value(dueDate),
         status: Value(priority),
         projectId: Value(projectId), 
-        isCompleted: Value(isCompleted)
+        isCompleted: Value(isCompleted), 
+        totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds)
         );
   }
 }
@@ -86,6 +87,7 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
   List<Task> toTaskList() {
     return map((taskData) {
       return Task(
+          totalFocusedSessionsInSeconds: taskData.totalFocusedSessionsInSeconds,
           taskId: taskData.taskId,
           taskTitle: taskData.taskTitle,
           taskDesc: taskData.taskDesc,
@@ -93,6 +95,7 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
           priority: taskData.status,
           projectId: taskData.projectId, 
           isCompleted: taskData.isCompleted
+          
           );
     }).toList();
   }

@@ -283,6 +283,15 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
       GeneratedColumn<int>('status', aliasedName, false,
               type: DriftSqlType.int, requiredDuringInsert: true)
           .withConverter<Priority>($TaskDatabaseTableTable.$converterstatus);
+  static const VerificationMeta _totalFocusedSessionsInSecondsMeta =
+      const VerificationMeta('totalFocusedSessionsInSeconds');
+  @override
+  late final GeneratedColumn<int> totalFocusedSessionsInSeconds =
+      GeneratedColumn<int>(
+          'total_focused_sessions_in_seconds', aliasedName, false,
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: Constant(0));
   static const VerificationMeta _projectIdMeta =
       const VerificationMeta('projectId');
   @override
@@ -301,6 +310,7 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
         dueDate,
         isCompleted,
         status,
+        totalFocusedSessionsInSeconds,
         projectId
       ];
   @override
@@ -350,6 +360,13 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
       context.missing(_isCompletedMeta);
     }
     context.handle(_statusMeta, const VerificationResult.success());
+    if (data.containsKey('total_focused_sessions_in_seconds')) {
+      context.handle(
+          _totalFocusedSessionsInSecondsMeta,
+          totalFocusedSessionsInSeconds.isAcceptableOrUnknown(
+              data['total_focused_sessions_in_seconds']!,
+              _totalFocusedSessionsInSecondsMeta));
+    }
     if (data.containsKey('project_id')) {
       context.handle(_projectIdMeta,
           projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta));
@@ -380,6 +397,9 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
       status: $TaskDatabaseTableTable.$converterstatus.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}status'])!),
+      totalFocusedSessionsInSeconds: attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}total_focused_sessions_in_seconds'])!,
       projectId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}project_id'])!,
     );
@@ -403,6 +423,7 @@ class TaskDatabaseTableData extends DataClass
   final DateTime dueDate;
   final bool isCompleted;
   final Priority status;
+  final int totalFocusedSessionsInSeconds;
   final String projectId;
   const TaskDatabaseTableData(
       {required this.id,
@@ -412,6 +433,7 @@ class TaskDatabaseTableData extends DataClass
       required this.dueDate,
       required this.isCompleted,
       required this.status,
+      required this.totalFocusedSessionsInSeconds,
       required this.projectId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -426,6 +448,8 @@ class TaskDatabaseTableData extends DataClass
       map['status'] =
           Variable<int>($TaskDatabaseTableTable.$converterstatus.toSql(status));
     }
+    map['total_focused_sessions_in_seconds'] =
+        Variable<int>(totalFocusedSessionsInSeconds);
     map['project_id'] = Variable<String>(projectId);
     return map;
   }
@@ -439,6 +463,7 @@ class TaskDatabaseTableData extends DataClass
       dueDate: Value(dueDate),
       isCompleted: Value(isCompleted),
       status: Value(status),
+      totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds),
       projectId: Value(projectId),
     );
   }
@@ -455,6 +480,8 @@ class TaskDatabaseTableData extends DataClass
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
       status: $TaskDatabaseTableTable.$converterstatus
           .fromJson(serializer.fromJson<int>(json['status'])),
+      totalFocusedSessionsInSeconds:
+          serializer.fromJson<int>(json['totalFocusedSessionsInSeconds']),
       projectId: serializer.fromJson<String>(json['projectId']),
     );
   }
@@ -470,6 +497,8 @@ class TaskDatabaseTableData extends DataClass
       'isCompleted': serializer.toJson<bool>(isCompleted),
       'status': serializer
           .toJson<int>($TaskDatabaseTableTable.$converterstatus.toJson(status)),
+      'totalFocusedSessionsInSeconds':
+          serializer.toJson<int>(totalFocusedSessionsInSeconds),
       'projectId': serializer.toJson<String>(projectId),
     };
   }
@@ -482,6 +511,7 @@ class TaskDatabaseTableData extends DataClass
           DateTime? dueDate,
           bool? isCompleted,
           Priority? status,
+          int? totalFocusedSessionsInSeconds,
           String? projectId}) =>
       TaskDatabaseTableData(
         id: id ?? this.id,
@@ -491,6 +521,8 @@ class TaskDatabaseTableData extends DataClass
         dueDate: dueDate ?? this.dueDate,
         isCompleted: isCompleted ?? this.isCompleted,
         status: status ?? this.status,
+        totalFocusedSessionsInSeconds:
+            totalFocusedSessionsInSeconds ?? this.totalFocusedSessionsInSeconds,
         projectId: projectId ?? this.projectId,
       );
   TaskDatabaseTableData copyWithCompanion(TaskDatabaseTableCompanion data) {
@@ -503,6 +535,9 @@ class TaskDatabaseTableData extends DataClass
       isCompleted:
           data.isCompleted.present ? data.isCompleted.value : this.isCompleted,
       status: data.status.present ? data.status.value : this.status,
+      totalFocusedSessionsInSeconds: data.totalFocusedSessionsInSeconds.present
+          ? data.totalFocusedSessionsInSeconds.value
+          : this.totalFocusedSessionsInSeconds,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
     );
   }
@@ -517,14 +552,16 @@ class TaskDatabaseTableData extends DataClass
           ..write('dueDate: $dueDate, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('status: $status, ')
+          ..write(
+              'totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, ')
           ..write('projectId: $projectId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, taskId, taskTitle, taskDesc, dueDate, isCompleted, status, projectId);
+  int get hashCode => Object.hash(id, taskId, taskTitle, taskDesc, dueDate,
+      isCompleted, status, totalFocusedSessionsInSeconds, projectId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -536,6 +573,8 @@ class TaskDatabaseTableData extends DataClass
           other.dueDate == this.dueDate &&
           other.isCompleted == this.isCompleted &&
           other.status == this.status &&
+          other.totalFocusedSessionsInSeconds ==
+              this.totalFocusedSessionsInSeconds &&
           other.projectId == this.projectId);
 }
 
@@ -548,6 +587,7 @@ class TaskDatabaseTableCompanion
   final Value<DateTime> dueDate;
   final Value<bool> isCompleted;
   final Value<Priority> status;
+  final Value<int> totalFocusedSessionsInSeconds;
   final Value<String> projectId;
   const TaskDatabaseTableCompanion({
     this.id = const Value.absent(),
@@ -557,6 +597,7 @@ class TaskDatabaseTableCompanion
     this.dueDate = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.status = const Value.absent(),
+    this.totalFocusedSessionsInSeconds = const Value.absent(),
     this.projectId = const Value.absent(),
   });
   TaskDatabaseTableCompanion.insert({
@@ -567,6 +608,7 @@ class TaskDatabaseTableCompanion
     required DateTime dueDate,
     required bool isCompleted,
     required Priority status,
+    this.totalFocusedSessionsInSeconds = const Value.absent(),
     required String projectId,
   })  : taskId = Value(taskId),
         taskTitle = Value(taskTitle),
@@ -583,6 +625,7 @@ class TaskDatabaseTableCompanion
     Expression<DateTime>? dueDate,
     Expression<bool>? isCompleted,
     Expression<int>? status,
+    Expression<int>? totalFocusedSessionsInSeconds,
     Expression<String>? projectId,
   }) {
     return RawValuesInsertable({
@@ -593,6 +636,8 @@ class TaskDatabaseTableCompanion
       if (dueDate != null) 'due_date': dueDate,
       if (isCompleted != null) 'is_completed': isCompleted,
       if (status != null) 'status': status,
+      if (totalFocusedSessionsInSeconds != null)
+        'total_focused_sessions_in_seconds': totalFocusedSessionsInSeconds,
       if (projectId != null) 'project_id': projectId,
     });
   }
@@ -605,6 +650,7 @@ class TaskDatabaseTableCompanion
       Value<DateTime>? dueDate,
       Value<bool>? isCompleted,
       Value<Priority>? status,
+      Value<int>? totalFocusedSessionsInSeconds,
       Value<String>? projectId}) {
     return TaskDatabaseTableCompanion(
       id: id ?? this.id,
@@ -614,6 +660,8 @@ class TaskDatabaseTableCompanion
       dueDate: dueDate ?? this.dueDate,
       isCompleted: isCompleted ?? this.isCompleted,
       status: status ?? this.status,
+      totalFocusedSessionsInSeconds:
+          totalFocusedSessionsInSeconds ?? this.totalFocusedSessionsInSeconds,
       projectId: projectId ?? this.projectId,
     );
   }
@@ -643,6 +691,10 @@ class TaskDatabaseTableCompanion
       map['status'] = Variable<int>(
           $TaskDatabaseTableTable.$converterstatus.toSql(status.value));
     }
+    if (totalFocusedSessionsInSeconds.present) {
+      map['total_focused_sessions_in_seconds'] =
+          Variable<int>(totalFocusedSessionsInSeconds.value);
+    }
     if (projectId.present) {
       map['project_id'] = Variable<String>(projectId.value);
     }
@@ -659,6 +711,8 @@ class TaskDatabaseTableCompanion
           ..write('dueDate: $dueDate, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('status: $status, ')
+          ..write(
+              'totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, ')
           ..write('projectId: $projectId')
           ..write(')'))
         .toString();
@@ -919,6 +973,7 @@ typedef $$TaskDatabaseTableTableCreateCompanionBuilder
   required DateTime dueDate,
   required bool isCompleted,
   required Priority status,
+  Value<int> totalFocusedSessionsInSeconds,
   required String projectId,
 });
 typedef $$TaskDatabaseTableTableUpdateCompanionBuilder
@@ -930,6 +985,7 @@ typedef $$TaskDatabaseTableTableUpdateCompanionBuilder
   Value<DateTime> dueDate,
   Value<bool> isCompleted,
   Value<Priority> status,
+  Value<int> totalFocusedSessionsInSeconds,
   Value<String> projectId,
 });
 
@@ -985,6 +1041,10 @@ class $$TaskDatabaseTableTableFilterComposer
           column: $table.status,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
+  ColumnFilters<int> get totalFocusedSessionsInSeconds => $composableBuilder(
+      column: $table.totalFocusedSessionsInSeconds,
+      builder: (column) => ColumnFilters(column));
+
   $$ProjectDatabaseTableTableFilterComposer get projectId {
     final $$ProjectDatabaseTableTableFilterComposer composer = $composerBuilder(
         composer: this,
@@ -1035,6 +1095,10 @@ class $$TaskDatabaseTableTableOrderingComposer
 
   ColumnOrderings<int> get status => $composableBuilder(
       column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalFocusedSessionsInSeconds => $composableBuilder(
+      column: $table.totalFocusedSessionsInSeconds,
+      builder: (column) => ColumnOrderings(column));
 
   $$ProjectDatabaseTableTableOrderingComposer get projectId {
     final $$ProjectDatabaseTableTableOrderingComposer composer =
@@ -1087,6 +1151,10 @@ class $$TaskDatabaseTableTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<Priority, int> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get totalFocusedSessionsInSeconds => $composableBuilder(
+      column: $table.totalFocusedSessionsInSeconds,
+      builder: (column) => column);
 
   $$ProjectDatabaseTableTableAnnotationComposer get projectId {
     final $$ProjectDatabaseTableTableAnnotationComposer composer =
@@ -1142,6 +1210,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             Value<DateTime> dueDate = const Value.absent(),
             Value<bool> isCompleted = const Value.absent(),
             Value<Priority> status = const Value.absent(),
+            Value<int> totalFocusedSessionsInSeconds = const Value.absent(),
             Value<String> projectId = const Value.absent(),
           }) =>
               TaskDatabaseTableCompanion(
@@ -1152,6 +1221,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             dueDate: dueDate,
             isCompleted: isCompleted,
             status: status,
+            totalFocusedSessionsInSeconds: totalFocusedSessionsInSeconds,
             projectId: projectId,
           ),
           createCompanionCallback: ({
@@ -1162,6 +1232,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             required DateTime dueDate,
             required bool isCompleted,
             required Priority status,
+            Value<int> totalFocusedSessionsInSeconds = const Value.absent(),
             required String projectId,
           }) =>
               TaskDatabaseTableCompanion.insert(
@@ -1172,6 +1243,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             dueDate: dueDate,
             isCompleted: isCompleted,
             status: status,
+            totalFocusedSessionsInSeconds: totalFocusedSessionsInSeconds,
             projectId: projectId,
           ),
           withReferenceMapper: (p0) => p0

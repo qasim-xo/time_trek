@@ -14,6 +14,7 @@ abstract class Task with _$Task {
     required Priority priority,
     required String projectId,
     required bool isCompleted, 
+    @Default(0) int totalFocusedSessionsInSeconds, 
   }) = _Task;
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
 }

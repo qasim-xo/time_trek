@@ -30,4 +30,6 @@ class TaskDao extends DatabaseAccessor<AppDatabase> {
           ..where((t) => t.taskId.equals(task.taskId)))
         .write(task.toCompanion());
   }
+
+  
 }

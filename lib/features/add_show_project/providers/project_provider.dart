@@ -3,7 +3,6 @@ import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/model/project/project.dart';
-import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 import 'package:uuid/uuid.dart';
 
@@ -71,7 +70,7 @@ class ProjectNotifier extends Notifier<ProjectState> {
     final runningProject = state.projectList
         .firstWhere((project) => project.projectId == task.projectId);
 
-    if (isRunning == true && project.projectId == runningProject) {
+    if (isRunning == true && project.projectId == runningProject.projectId) {
       ref.read(pomodoroTimerProvider.notifier).resetTimer();
     }
 

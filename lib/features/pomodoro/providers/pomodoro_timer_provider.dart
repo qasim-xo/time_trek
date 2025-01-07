@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
+import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
 import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/main.dart';
@@ -19,6 +20,8 @@ class PomodoroTimerState {
   Duration? pomodoroTime;
   int? countFocusSessions;
   Duration selectedPomodoroTime;
+  int totalFocusedSessionsInSeconds; 
+  int lastFocusedSessionPausedInSeconds; 
 
   PomodoroTimerState(
       {required this.taskId,
@@ -27,7 +30,10 @@ class PomodoroTimerState {
       required this.pomodoroTime,
       required this.pomodoroTimerType,
       required this.countFocusSessions,
-      required this.selectedPomodoroTime});
+      required this.selectedPomodoroTime, 
+      required this.totalFocusedSessionsInSeconds, 
+      required this.lastFocusedSessionPausedInSeconds
+      });
 
   PomodoroTimerState copyWith(
       {String? taskId,
@@ -37,7 +43,10 @@ class PomodoroTimerState {
       bool? isBreak,
       int? countFocusSessions,
       Duration? selectedPomodoroTime,
-      PomodoroTimerType? pomodoroTimerType}) {
+      PomodoroTimerType? pomodoroTimerType,
+      int? totalFocusedSessionsInSeconds, 
+      int? lastFocusedSessionPausedInSeconds,
+      }) {
     return PomodoroTimerState(
         taskId: taskId ?? this.taskId,
         isRunning: isRunning ?? this.isRunning,
@@ -45,11 +54,16 @@ class PomodoroTimerState {
         pomodoroTime: pomodoroTime ?? this.pomodoroTime,
         selectedPomodoroTime: selectedPomodoroTime ?? this.selectedPomodoroTime,
         pomodoroTimerType: pomodoroTimerType ?? this.pomodoroTimerType,
-        countFocusSessions: countFocusSessions ?? this.countFocusSessions);
+        countFocusSessions: countFocusSessions ?? this.countFocusSessions,
+        totalFocusedSessionsInSeconds: totalFocusedSessionsInSeconds ?? this.totalFocusedSessionsInSeconds, 
+        lastFocusedSessionPausedInSeconds: lastFocusedSessionPausedInSeconds ?? this.lastFocusedSessionPausedInSeconds
+        );
   }
 
   factory PomodoroTimerState.initial() {
     return PomodoroTimerState(
+        lastFocusedSessionPausedInSeconds: 1500,
+        totalFocusedSessionsInSeconds: 0,
         selectedPomodoroTime: Duration(minutes: 25, seconds: 0),
         taskId: '',
         countFocusSessions: 0,
@@ -184,33 +198,58 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   }
 
   void pauseTimer() {
+   
     state = state.copyWith(isRunning: false);
     state.timer!.cancel();
+
+
+     if (state.pomodoroTimerType==PomodoroTimerType.focusSession)
+    {
+      final oldFocusedSessionTimerValue = ref.read(onPauseStateProvider.notifier).state;
+      state = state.copyWith(lastFocusedSessionPausedInSeconds: oldFocusedSessionTimerValue); //1500
+      ref.read(onPauseStateProvider.notifier).state=state.pomodoroTime!.inSeconds; //1300
+      storeFocusedSessionTimerValueInDb();
+    }
+  }
+
+
+  void storeFocusedSessionTimerValueInDb () 
+  {
+    final task = ref.read(taskProvider).taskList.firstWhere((task)=>task.taskId==state.taskId); 
+    final calculateChangeBetweenLastFocusedPausedAndRunningTimer = (state.lastFocusedSessionPausedInSeconds-state.pomodoroTime!.inSeconds);
+    state.totalFocusedSessionsInSeconds = task.totalFocusedSessionsInSeconds + calculateChangeBetweenLastFocusedPausedAndRunningTimer;
+    state = state.copyWith(totalFocusedSessionsInSeconds: state.totalFocusedSessionsInSeconds); 
+
+
+    ref.read(taskProvider.notifier).updateTask(task.copyWith(totalFocusedSessionsInSeconds: state.totalFocusedSessionsInSeconds));
   }
 
   void resetTimer() {
+   
     final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
 
-    pauseTimer();
-
+   
+    setIsRunning(false); 
+    state.timer!.cancel();
+    
     showFloatingTimerWidget(false);
     state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
     setPomodoroTime(focusSession);
     setSelectedPomodoroTime(focusSession);
+     resetFields();
+  }
+
+  void resetFields()
+  {
+    state = state.copyWith(lastFocusedSessionPausedInSeconds: 1500);
+    state = state.copyWith(totalFocusedSessionsInSeconds: 0); 
+
+    ref.read(onPauseStateProvider.notifier).state= state.selectedPomodoroTime.inSeconds; 
+
   }
 
   void showNotificationWithTimer() async {
-    // fln.AndroidNotificationDetails androidPlatformChannelSpecifics =
-    //     fln.AndroidNotificationDetails(
-    //   'timer_channel',
-    //   'Timer Notifications',
-    //   importance: fln.Importance.low,
-    //   priority: fln.Priority.high,
-    //   onlyAlertOnce: true,
-    //   ongoing: true,
-    //   showWhen: false
-    // );
-
+    
     fln.NotificationDetails platformChannelSpecifics = fln.NotificationDetails(
       android: NotificationService().androidPlatformChannelSpecifics,
     );
@@ -227,3 +266,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 final pomodoroTimerProvider =
     NotifierProvider<PomodoroTimerNotifier, PomodoroTimerState>(
         PomodoroTimerNotifier.new);
+
+final onPauseStateProvider = StateProvider<int>(
+  (ref) => ref.read(pomodoroTimerProvider).selectedPomodoroTime.inSeconds //25 minutes
+);
