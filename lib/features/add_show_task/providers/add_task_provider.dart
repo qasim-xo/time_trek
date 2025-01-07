@@ -96,9 +96,8 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void deleteTask(Task task) {
-    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
-    if (isRunning == true &&
-        task.taskId == ref.read(pomodoroTimerProvider).taskId) {
+    // final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+    if (task.taskId == ref.read(pomodoroTimerProvider).taskId) {
       ref.read(pomodoroTimerProvider.notifier).resetTimer();
     }
     int index = state.filteredTaskList.indexOf(task);

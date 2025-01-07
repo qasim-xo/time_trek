@@ -63,7 +63,9 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
     if (!isRunning && pomodoroTimerType == PomodoroTimerType.focusSession) {
       ref.read(pomodoroTimerProvider.notifier).setPomodoroTime(newFocusSession);
-      ref.read(pomodoroTimerProvider.notifier).setSelectedPomodoroTime(newFocusSession);
+      ref
+          .read(pomodoroTimerProvider.notifier)
+          .setSelectedPomodoroTime(newFocusSession);
     }
   }
 
@@ -74,7 +76,9 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
     final pomodoroTimerType = ref.read(pomodoroTimerProvider).pomodoroTimerType;
     if (!isRunning && pomodoroTimerType == PomodoroTimerType.shortBreak) {
       ref.read(pomodoroTimerProvider.notifier).setPomodoroTime(newShortBreak);
-      ref.read(pomodoroTimerProvider.notifier).setSelectedPomodoroTime(newShortBreak);
+      ref
+          .read(pomodoroTimerProvider.notifier)
+          .setSelectedPomodoroTime(newShortBreak);
     }
   }
 
@@ -86,7 +90,9 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
     if (!isRunning && pomodoroTimerType == PomodoroTimerType.longBreak) {
       ref.read(pomodoroTimerProvider.notifier).setPomodoroTime(newLongBreak);
-      ref.read(pomodoroTimerProvider.notifier).setSelectedPomodoroTime(newLongBreak);
+      ref
+          .read(pomodoroTimerProvider.notifier)
+          .setSelectedPomodoroTime(newLongBreak);
     }
   }
 
