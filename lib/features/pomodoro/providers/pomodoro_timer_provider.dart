@@ -11,6 +11,7 @@ import 'package:project_management_app/features/pomodoro/providers/pomodoro_sett
 import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/main.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
+import 'package:flutter_background/flutter_background.dart';
 
 class PomodoroTimerState {
   String taskId;
@@ -86,7 +87,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void setSelectedPomodoroTime(Duration time) {
     state = state.copyWith(selectedPomodoroTime: time);
-    resetFields(); 
+    resetFields();
   }
 
   void setPomodoroTime(Duration newTime) {
@@ -100,7 +101,13 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
         .setIsWidgetActive(isWidgetActive);
   }
 
-  void startTimer() {
+  Future<void> startTimer() async {
+    bool success = await FlutterBackground.enableBackgroundExecution();
+    if (success) {
+      print("Background execution started!");
+    } else {
+      print("Failed to start background execution.");
+    }
     state = state.copyWith(
       isRunning: true,
       timer: Timer.periodic(
@@ -198,16 +205,14 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(taskId: taskId);
   }
 
-
-  void cancelNotification () async 
-  {
+  void cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
-  void pauseTimer() {
+  Future<void> pauseTimer() async {
     state = state.copyWith(isRunning: false);
     state.timer!.cancel();
-    cancelNotification(); 
+    cancelNotification();
 
     if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       final oldFocusedSessionTimerValue =
@@ -267,12 +272,9 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
       android: NotificationService().androidPlatformChannelSpecifics,
     );
 
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Pomodoro Timer',
-      state.pomodoroTime?.toClockFormat(),
-      platformChannelSpecifics,
-    );
+    await flutterLocalNotificationsPlugin.show(0, 'Pomodoro Timer',
+        state.pomodoroTime?.toClockFormat(), platformChannelSpecifics,
+        payload: '/pomodoro');
   }
 }
 
@@ -280,8 +282,5 @@ final pomodoroTimerProvider =
     NotifierProvider<PomodoroTimerNotifier, PomodoroTimerState>(
         PomodoroTimerNotifier.new);
 
-final onPauseStateProvider = StateProvider<int>((ref) => ref
-        .read(pomodoroTimerProvider)
-        .selectedPomodoroTime
-        .inSeconds 
-    );
+final onPauseStateProvider = StateProvider<int>(
+    (ref) => ref.read(pomodoroTimerProvider).selectedPomodoroTime.inSeconds);

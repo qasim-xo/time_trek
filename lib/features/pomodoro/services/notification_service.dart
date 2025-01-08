@@ -1,5 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project_management_app/constants/string_constants.dart';
+import 'package:project_management_app/main.dart';
+import 'package:project_management_app/router/app_router.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -47,6 +50,11 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
+      onDidReceiveNotificationResponse: (details) {
+        if (details.payload != null) {
+          appRouter.pushNamed(details.payload!);
+        }
+      },
     );
   }
 

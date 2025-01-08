@@ -24,7 +24,7 @@ class AppRouter extends RootStackRouter {
       AutoRoute(
         page: AddTaskRoute.page,
       ),
-      AutoRoute(page: PomodoroRoute.page)
+      AutoRoute(page: PomodoroRoute.page, path: '/pomodoro')
     ];
   }
 }
