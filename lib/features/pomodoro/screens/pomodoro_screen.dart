@@ -5,6 +5,7 @@ import 'package:project_management_app/constants/ui_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_settings_sheet_widget.dart';
+import 'package:project_management_app/features/pomodoro/widgets/pomodoro_stats_widget.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_timer_widget.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
@@ -51,8 +52,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
         body: Padding(
           padding: homePadding,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              const PomodoroStatsWidget(),
               const PomodoroTimerWidget(),
               const SizedBox(height: 20.0),
               Row(

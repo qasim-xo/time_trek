@@ -66,6 +66,8 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
       ref
           .read(pomodoroTimerProvider.notifier)
           .setSelectedPomodoroTime(newFocusSession);
+
+      
     }
   }
 
@@ -107,7 +109,7 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
   void playClockTickSound() {
     AudioPlayer player = AudioPlayer();
     if (state.isPlaySound) {
-      player.play(AssetSource(clockTickSound));
+      player.play(AssetSource(clockTickSound, mimeType: 'audio/mp3'));
     } else {
       player.stop();
     }
@@ -115,7 +117,7 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
   void playAlarmSound() {
     AudioPlayer player = AudioPlayer();
-    player.play(AssetSource(alarmSound));
+    player.play(AssetSource(alarmSound, mimeType: 'audio/mp3'));
   }
 }
 

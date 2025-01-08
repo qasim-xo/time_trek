@@ -34,7 +34,7 @@ class _TaskCardWidgetState extends ConsumerState<TaskCardWidget> {
             Row(
               children: [
                 Checkbox(value: task.isCompleted, onChanged: (bool? newValue){
-                  ref.read(homeProvider.notifier).toggleIsCompleted(widget.task,newValue);
+                  ref.read(showTaskProvider.notifier).toggleIsCompleted(widget.task,newValue);
                 }),
                 SizedBox(
                   width: 10,

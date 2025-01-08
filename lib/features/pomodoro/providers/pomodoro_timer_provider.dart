@@ -86,6 +86,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void setSelectedPomodoroTime(Duration time) {
     state = state.copyWith(selectedPomodoroTime: time);
+    resetFields(); 
   }
 
   void setPomodoroTime(Duration newTime) {
@@ -197,9 +198,16 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(taskId: taskId);
   }
 
+
+  void cancelNotification () async 
+  {
+    await flutterLocalNotificationsPlugin.cancel(0);
+  }
+
   void pauseTimer() {
     state = state.copyWith(isRunning: false);
     state.timer!.cancel();
+    cancelNotification(); 
 
     if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       final oldFocusedSessionTimerValue =
@@ -275,5 +283,5 @@ final pomodoroTimerProvider =
 final onPauseStateProvider = StateProvider<int>((ref) => ref
         .read(pomodoroTimerProvider)
         .selectedPomodoroTime
-        .inSeconds //25 minutes
+        .inSeconds 
     );

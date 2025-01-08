@@ -37,7 +37,7 @@ class FloatingPomodoroTimerWidget extends ConsumerWidget {
                         ?.copyWith(fontSize: 20, color: AppColors.whiteColor),
                   ),
                   Text(
-                    "${pomodoroTime!.toClockFormat()} (${pomodoroTimerType.toString().split('.').last})",
+                    "${pomodoroTime!.toClockFormat()} (${pomodoroTimerType.readableText()})",
                     style: context.textTheme.titleMedium
                         ?.copyWith(fontSize: 15, color: AppColors.whiteColor),
                   )

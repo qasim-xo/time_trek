@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/model/project/project.dart';
 import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
@@ -109,3 +110,28 @@ extension DurationClockFormat on Duration {
     return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }
+
+
+
+extension TimeConversion on int {
+  String toHoursAndMinutes() {
+    int hours = this ~/ 3600;
+    int minutes = (this % 3600) ~/ 60;
+    return '${hours}h ${minutes}m';
+  }
+}
+
+
+extension StatusExtension on  PomodoroTimerType{
+  String readableText () {
+    switch (this) {
+      case PomodoroTimerType.focusSession:
+        return 'Focus Session';
+      case PomodoroTimerType.longBreak:
+        return 'Long Break';
+      case PomodoroTimerType.shortBreak:
+        return 'Short Break';
+    }
+  }
+}
+

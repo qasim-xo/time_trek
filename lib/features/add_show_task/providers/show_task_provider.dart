@@ -5,16 +5,21 @@ import 'package:project_management_app/model/task/task.dart';
 
 class HomeState {
   int filterValue;
-  bool isCompleted; 
 
-  HomeState({required this.filterValue,required this.isCompleted});
+  HomeState({
+    required this.filterValue,
+  });
 
   HomeState copyWith({int? filterValue, bool? isCompleted}) {
-    return HomeState(filterValue: filterValue ?? this.filterValue, isCompleted: isCompleted??this.isCompleted);
+    return HomeState(
+      filterValue: filterValue ?? this.filterValue,
+    );
   }
 
   factory HomeState.initial() {
-    return HomeState(filterValue: -1, isCompleted: false);
+    return HomeState(
+      filterValue: -1,
+    );
   }
 }
 
@@ -29,11 +34,11 @@ class HomeNotifier extends Notifier<HomeState> {
     filterTaskList();
   }
 
-
-  void toggleIsCompleted (Task task, bool? newValue) 
-  {
+  void toggleIsCompleted(Task task, bool? newValue) {
     //  state = state.copyWith(isCompleted: !state.isCompleted);
-     ref.read(taskProvider.notifier).updateTask(task.copyWith(isCompleted: newValue??false));
+    ref
+        .read(taskProvider.notifier)
+        .updateTask(task.copyWith(isCompleted: newValue ?? false));
   }
 
   void filterTaskList() {
@@ -54,8 +59,40 @@ class HomeNotifier extends Notifier<HomeState> {
       ref.read(taskProvider.notifier).setTaskList(taskList);
     }
   }
+
+  int getNumberOfTasksCompleted(String projectId) {
+    int count = 0;
+    final tasks = ref
+        .read(taskProvider)
+        .taskList
+        .where((task) => task.projectId == projectId)
+        .toList();
+
+    for (Task task in tasks) {
+      if (task.isCompleted) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  int getTotalHoursSpentOnTheProject(String projectId) {
+    final tasks = ref
+        .read(taskProvider)
+        .taskList
+        .where((task) => task.projectId == projectId)
+        .toList();
+    int totalHours = 0;
+
+    for (Task task in tasks) {
+      totalHours = totalHours + task.totalFocusedSessionsInSeconds;
+    }
+
+    return totalHours;
+  }
 }
 
-final homeProvider = NotifierProvider<HomeNotifier, HomeState>(() {
+final showTaskProvider = NotifierProvider<HomeNotifier, HomeState>(() {
   return HomeNotifier();
 });

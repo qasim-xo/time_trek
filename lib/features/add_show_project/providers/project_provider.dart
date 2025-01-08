@@ -4,6 +4,7 @@ import 'package:project_management_app/features/add_show_task/providers/add_task
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/model/project/project.dart';
 import 'package:project_management_app/repository/database_repo.dart';
+import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class ProjectState {
@@ -60,8 +61,13 @@ class ProjectNotifier extends Notifier<ProjectState> {
 
   void deleteProject(Project project) {
     int index = state.projectList.indexOf(project);
-    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
-    final runningTaskId = ref.read(pomodoroTimerProvider).taskId;
+    // final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+
+    final isWidgetActive = ref.read(floatingPomodoroTimerProvider).isWidgetActive; 
+
+    if(isWidgetActive)
+    {
+       final runningTaskId = ref.read(pomodoroTimerProvider).taskId;
     final task = ref
         .read(taskProvider)
         .taskList
@@ -70,9 +76,13 @@ class ProjectNotifier extends Notifier<ProjectState> {
     final runningProject = state.projectList
         .firstWhere((project) => project.projectId == task.projectId);
 
-    if (isRunning == true && project.projectId == runningProject.projectId) {
+    if (project.projectId == runningProject.projectId) {
       ref.read(pomodoroTimerProvider.notifier).resetTimer();
     }
+
+  }
+
+   
 
     final deletedProjectListItem = state.projectList.toList();
     deletedProjectListItem.removeAt(index);

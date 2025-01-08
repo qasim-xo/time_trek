@@ -52,6 +52,7 @@ class _ShowProjectScreenState extends ConsumerState<ShowProjectScreen> {
           alignment: Alignment.bottomCenter,
           children: 
           [
+            
             ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(

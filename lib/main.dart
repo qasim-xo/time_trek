@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:project_management_app/constants/string_constants.dart';
 import 'package:project_management_app/router/app_router.dart';
-import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
+import 'package:project_management_app/theme/app_theme.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -41,6 +40,7 @@ class MyApp extends StatelessWidget {
       routerConfig: appRouter.config(),
       title: 'Flutter Demo',
       theme: ThemeData(
+        textTheme: AppTextTheme.textTheme(AppColorSchemes.lightColorScheme),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),

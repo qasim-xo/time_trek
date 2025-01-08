@@ -147,7 +147,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       .setTaskTitleDescriptionAndProjectId(
                         taskTitleController.text,
                         taskDescriptionController.text,
-                      );
+                  );
                   ref.read(taskProvider.notifier).addTask();
                 }
                 context.maybePop();

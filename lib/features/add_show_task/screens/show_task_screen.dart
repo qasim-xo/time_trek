@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/ui_constants.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/features/add_show_task/providers/show_task_provider.dart';
+import 'package:project_management_app/features/add_show_task/widgets/project_stats_widget.dart';
 import 'package:project_management_app/features/add_show_task/widgets/task_card_widget.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/router/app_router.dart';
@@ -40,6 +41,7 @@ class _ShowTaskScreenState extends ConsumerState<ShowTaskScreen> {
     final isWidgetActive =
         ref.watch(floatingPomodoroTimerProvider).isWidgetActive;
     final taskId = ref.watch(pomodoroTimerProvider).taskId;
+    
 
    
 
@@ -61,7 +63,7 @@ class _ShowTaskScreenState extends ConsumerState<ShowTaskScreen> {
               const PopupMenuItem(value: 4, child: Text("Show all tasks"))
             ],
             onSelected: (value) {
-              ref.read(homeProvider.notifier).setFilterValue(value);
+              ref.read(showTaskProvider.notifier).setFilterValue(value);
             },
           )
         ],
@@ -70,58 +72,67 @@ class _ShowTaskScreenState extends ConsumerState<ShowTaskScreen> {
         padding: homePadding,
         child: Stack(
           alignment: Alignment.bottomCenter, children: [
-          ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                  onTap:
-                      isWidgetActive == false || taskId == tasks[index].taskId
-                          ? () {
-                              ref
-                                  .read(pomodoroTimerProvider.notifier)
-                                  .setTaskIdAndProjectIdTimerIsRunningFor(
-                                      tasks[index].taskId);
-                              context.router.push(const PomodoroRoute());
-                            }
-                          : () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Reset Timer?"),
-                                      content: Text(
-                                          "Do you want to reset the current running timer to proceed using the timer for the clicked task?"),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              context.router.maybePop();
-                                            },
-                                            child: Text("No")),
-                                        TextButton(
-                                            onPressed: () {
-                                              ref
-                                                  .read(pomodoroTimerProvider
-                                                      .notifier)
-                                                  .resetTimer();
-
-                                              ref
-                                                  .read(pomodoroTimerProvider
-                                                      .notifier)
-                                                  .setTaskIdAndProjectIdTimerIsRunningFor(
-                                                      tasks[index].taskId);
-
-                                              context.router
-                                                  .push(const PomodoroRoute());
-
-                                              context.router.maybePop();
-                                            },
-                                            child: Text("Yes"))
-                                      ],
-                                    );
-                                  });
-                            },
-                  child: TaskCardWidget(task: tasks[index]));
-            },
-            itemCount: tasks.length,
+          Column(
+            children: [
+              SizedBox(
+              width: double.infinity,  
+              child: ProjectStatsWidget(projectId: widget.projectId,)), 
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                      onTap:
+                          isWidgetActive == false || taskId == tasks[index].taskId
+                              ? () {
+                                  ref
+                                      .read(pomodoroTimerProvider.notifier)
+                                      .setTaskIdAndProjectIdTimerIsRunningFor(
+                                          tasks[index].taskId);
+                                  context.router.push(const PomodoroRoute());
+                                }
+                              : () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Reset Timer?"),
+                                          content: Text(
+                                              "Do you want to reset the current running timer to proceed using the timer for the clicked task?"),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  context.router.maybePop();
+                                                },
+                                                child: Text("No")),
+                                            TextButton(
+                                                onPressed: () {
+                                                  ref
+                                                      .read(pomodoroTimerProvider
+                                                          .notifier)
+                                                      .resetTimer();
+              
+                                                  ref
+                                                      .read(pomodoroTimerProvider
+                                                          .notifier)
+                                                      .setTaskIdAndProjectIdTimerIsRunningFor(
+                                                          tasks[index].taskId);
+              
+                                                  context.router
+                                                      .push(const PomodoroRoute());
+              
+                                                  context.router.maybePop();
+                                                },
+                                                child: Text("Yes"))
+                                          ],
+                                        );
+                                      });
+                                },
+                      child: TaskCardWidget(task: tasks[index]));
+                },
+                itemCount: tasks.length,
+              ),
+            ],
           ),
           isWidgetActive && (taskId != '' || taskId.isNotEmpty)
               ? SizedBox(height: 102, child: FloatingPomodoroTimerWidget())

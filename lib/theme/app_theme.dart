@@ -37,6 +37,17 @@ class AppColorSchemes {
 
 class AppTheme {
   static final lightTheme = ThemeData(
+    inputDecorationTheme: InputDecorationTheme(
+      labelStyle: TextStyle(
+        color: Colors.blue,
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          style: BorderStyle.solid,
+          color: Colors.blue,
+        ),
+      ),
+    ),
     colorScheme: AppColorSchemes.lightColorScheme,
     textSelectionTheme:
         const TextSelectionThemeData(cursorColor: AppColors.blackColor),
@@ -50,10 +61,7 @@ class AppTheme {
     datePickerTheme: const DatePickerThemeData(
       backgroundColor: AppColors.whiteColor,
     ),
-    // timePickerTheme: const TimePickerThemeData(
-    //   dayPeriodColor: AppColors.primary,
-    //   dayPeriodTextColor: AppColors.white,
-    // ),
+   
     tooltipTheme: TooltipThemeData(
       textStyle: AppTextTheme.textTheme(AppColorSchemes.lightColorScheme)
           .bodyMedium
@@ -86,6 +94,7 @@ class AppTheme {
         ), // Add your text style here
       ),
     ),
+    
     dialogTheme: DialogTheme(
       backgroundColor: AppColors.primaryColor.withOpacity(0.5),
       surfaceTintColor: Colors.transparent,
