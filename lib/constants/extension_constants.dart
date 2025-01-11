@@ -60,10 +60,9 @@ extension TaskToCompanion on Task {
         taskDesc: Value(taskDesc),
         dueDate: Value(dueDate),
         status: Value(priority),
-        projectId: Value(projectId), 
-        isCompleted: Value(isCompleted), 
-        totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds)
-        );
+        projectId: Value(projectId),
+        isCompleted: Value(isCompleted),
+        totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds));
   }
 }
 
@@ -94,10 +93,8 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
           taskDesc: taskData.taskDesc,
           dueDate: taskData.dueDate,
           priority: taskData.status,
-          projectId: taskData.projectId, 
-          isCompleted: taskData.isCompleted
-          
-          );
+          projectId: taskData.projectId,
+          isCompleted: taskData.isCompleted);
     }).toList();
   }
 }
@@ -111,8 +108,6 @@ extension DurationClockFormat on Duration {
   }
 }
 
-
-
 extension TimeConversion on int {
   String toHoursAndMinutes() {
     int hours = this ~/ 3600;
@@ -121,9 +116,8 @@ extension TimeConversion on int {
   }
 }
 
-
-extension StatusExtension on  PomodoroTimerType{
-  String readableText () {
+extension StatusExtension on PomodoroTimerType {
+  String readableText() {
     switch (this) {
       case PomodoroTimerType.focusSession:
         return 'Focus Session';
@@ -135,3 +129,15 @@ extension StatusExtension on  PomodoroTimerType{
   }
 }
 
+extension PriorityExtension on Priority {
+  String readableText() {
+    switch (this) {
+      case Priority.high:
+        return 'High';
+      case Priority.medium:
+        return 'Medium';
+      case Priority.low:
+        return 'Low';
+    }
+  }
+}

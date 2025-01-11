@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
+import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/model/task/task.dart';
+import 'package:project_management_app/shared/widgets/custom_textfield.dart';
 
 @RoutePage()
 class AddTaskScreen extends ConsumerStatefulWidget {
@@ -51,77 +53,96 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
           children: [
             TextField(
               controller: taskTitleController,
-              decoration: const InputDecoration(
-                hintText: "Enter Task Title",
+              obscureText: true,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Title',
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: taskDescriptionController,
-              decoration: const InputDecoration(
-                hintText: "Enter Task Description",
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              readOnly: true,
+              obscureText: true,
               decoration: InputDecoration(
-                hintText: "Select Date: ${selectedDate.toLocal()}",
+                border: OutlineInputBorder(),
+                labelText: 'Description',
               ),
-              onTap: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: currentTime,
-                  lastDate: DateTime(3000),
-                ).then((date) {
-                  if (date != null) {
-                    ref.read(taskProvider.notifier).onDateSelected(date);
-                    // ref.read(selectedDateProvider.notifier).state = date;
-                  }
-                });
-              },
             ),
             const SizedBox(height: 16),
-            Column(
-              children: <Widget>[
-                ListTile(
-                  title: const Text('High'),
-                  leading: Radio<Priority>(
-                    value: Priority.high,
-                    groupValue: selectedOption,
-                    activeColor: Colors.red,
-                    onChanged: (Priority? value) {
-                      ref
-                          .read(taskProvider.notifier)
-                          .onOptionSelected(value ?? Priority.high);
-                      // ref.read(selectedOptionProvider.notifier).state = value;
+            Row(
+              children: [
+                Flexible(
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      suffixIcon: const Icon(Icons.flag),
+                      hintText: selectedOption.readableText(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: OutlineInputBorder(),
+                      labelText: 'Priority',
+                    ),
+                    onTap: () async {
+                      showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(100.0, 220, 120, 0.0),
+                        items: [
+                          PopupMenuItem<Priority>(
+                            value: Priority.low,
+                            child: Text("Low"),
+                            onTap: () {
+                              ref
+                                  .read(taskProvider.notifier)
+                                  .onOptionSelected(Priority.low);
+                            },
+                          ),
+                          PopupMenuItem<Priority>(
+                            value: Priority.medium,
+                            child: Text("Medium"),
+                            onTap: () {
+                              ref
+                                  .read(taskProvider.notifier)
+                                  .onOptionSelected(Priority.medium);
+                            },
+                          ),
+                          PopupMenuItem<Priority>(
+                            value: Priority.high,
+                            child: Text("High"),
+                            onTap: () {
+                              ref
+                                  .read(taskProvider.notifier)
+                                  .onOptionSelected(Priority.high);
+                            },
+                          ),
+                        ],
+                      );
                     },
                   ),
                 ),
-                ListTile(
-                  title: const Text('Medium'),
-                  leading: Radio<Priority>(
-                    value: Priority.medium,
-                    groupValue: selectedOption,
-                    activeColor: Colors.blue,
-                    onChanged: (Priority? value) {
-                      ref
-                          .read(taskProvider.notifier)
-                          .onOptionSelected(value ?? Priority.high);
-                    },
-                  ),
+                SizedBox(
+                  width: 20,
                 ),
-                ListTile(
-                  title: const Text('Low'),
-                  leading: Radio<Priority>(
-                    value: Priority.low,
-                    groupValue: selectedOption,
-                    activeColor: Colors.green,
-                    onChanged: (Priority? value) {
-                      ref
-                          .read(taskProvider.notifier)
-                          .onOptionSelected(value ?? Priority.high);
+                Flexible(
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      suffixIcon: const Icon(Icons.calendar_today),
+                      hintText: selectedDate.toMMMDD(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: OutlineInputBorder(),
+                      labelText: 'Due Date',
+                    ),
+                    onTap: () {
+                      showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: currentTime,
+                        lastDate: DateTime(3000),
+                      ).then((date) {
+                        if (date != null) {
+                          ref.read(taskProvider.notifier).onDateSelected(date);
+                          // ref.read(selectedDateProvider.notifier).state = date;
+                        }
+                      });
                     },
                   ),
                 ),
@@ -137,9 +158,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       taskDesc: taskDescriptionController.text,
                       dueDate: selectedDate,
                       priority: selectedOption,
-                      projectId: widget.task!.projectId, 
-                      isCompleted: widget.task!.isCompleted
-                      );
+                      projectId: widget.task!.projectId,
+                      isCompleted: widget.task!.isCompleted);
                   ref.read(taskProvider.notifier).updateTask(updatedTask);
                 } else {
                   ref
@@ -147,7 +167,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       .setTaskTitleDescriptionAndProjectId(
                         taskTitleController.text,
                         taskDescriptionController.text,
-                  );
+                      );
                   ref.read(taskProvider.notifier).addTask();
                 }
                 context.maybePop();
