@@ -8,6 +8,7 @@ import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
+import 'package:project_management_app/features/pomodoro/services/audio_service.dart';
 import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/main.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
@@ -86,7 +87,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void setSelectedPomodoroTime(Duration time) {
     state = state.copyWith(selectedPomodoroTime: time);
-    resetFields(); 
+    resetFields();
   }
 
   void setPomodoroTime(Duration newTime) {
@@ -101,8 +102,10 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   }
 
   void startTimer() {
+    setIsRunning(true);
+    playSelectedSound();
+
     state = state.copyWith(
-      isRunning: true,
       timer: Timer.periodic(
         const Duration(seconds: 1),
         (timer) => _onTick(timer),
@@ -122,8 +125,6 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
       return;
     }
 
-    playClockTickSound();
-
     final updatedTime = state.pomodoroTime! - const Duration(seconds: 1);
     setPomodoroTime(updatedTime);
 
@@ -137,9 +138,13 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     }
   }
 
-  void playClockTickSound() {
-    ref.read(pomodoroSettingsProvider.notifier).playClockTickSound();
+  void playSelectedSound() {
+    ref.read(pomodoroSettingsProvider.notifier).playSelectedSound();
   }
+
+  // void playClockTickSound() {
+  //   ref.read(pomodoroSettingsProvider.notifier).playClockTickSound();
+  // }
 
   void playAlarmSoundOnSessionEnd() {
     ref.read(pomodoroSettingsProvider.notifier).playAlarmSound();
@@ -198,16 +203,17 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state = state.copyWith(taskId: taskId);
   }
 
-
-  void cancelNotification () async 
-  {
+  void cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
   void pauseTimer() {
     state = state.copyWith(isRunning: false);
     state.timer!.cancel();
-    cancelNotification(); 
+    cancelNotification();
+
+    AudioService().stopSound();
+    // ref.read(pomodoroSettingsProvider.notifier).setIsPlaySound(false);
 
     if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       final oldFocusedSessionTimerValue =
@@ -280,8 +286,5 @@ final pomodoroTimerProvider =
     NotifierProvider<PomodoroTimerNotifier, PomodoroTimerState>(
         PomodoroTimerNotifier.new);
 
-final onPauseStateProvider = StateProvider<int>((ref) => ref
-        .read(pomodoroTimerProvider)
-        .selectedPomodoroTime
-        .inSeconds 
-    );
+final onPauseStateProvider = StateProvider<int>(
+    (ref) => ref.read(pomodoroTimerProvider).selectedPomodoroTime.inSeconds);

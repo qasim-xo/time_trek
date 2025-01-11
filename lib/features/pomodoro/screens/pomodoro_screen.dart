@@ -7,6 +7,7 @@ import 'package:project_management_app/features/pomodoro/providers/pomodoro_time
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_settings_sheet_widget.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_stats_widget.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_timer_widget.dart';
+import 'package:project_management_app/features/pomodoro/widgets/select_focus_sound_dialog_box_widget.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
 @RoutePage()
@@ -46,7 +47,16 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                 },
                 icon: isPlaySound
                     ? Icon(Icons.volume_up)
-                    : Icon(Icons.volume_off))
+                    : Icon(Icons.volume_off)),
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SelectFocusSoundDialogBoxWidget();
+                      });
+                },
+                icon: Icon(Icons.music_note))
           ],
         ),
         body: Padding(
@@ -66,8 +76,6 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                               ref
                                   .read(pomodoroTimerProvider.notifier)
                                   .startFocusSession();
-
-                         
                             }
                           : () {
                               ref

@@ -1,9 +1,9 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/string_constants.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
+import 'package:project_management_app/features/pomodoro/services/audio_service.dart';
 
 class PomodoroSettingsState {
   Duration focusSession;
@@ -11,37 +11,40 @@ class PomodoroSettingsState {
   Duration longBreak;
   int longBreakInterval;
   bool isPlaySound;
+  int selectedRadioButton;
 
   PomodoroSettingsState(
       {required this.focusSession,
       required this.shortBreak,
       required this.longBreak,
       required this.longBreakInterval,
-      required this.isPlaySound});
+      required this.isPlaySound,
+      required this.selectedRadioButton});
 
   PomodoroSettingsState copyWith(
       {Duration? focusSession,
       Duration? shortBreak,
       Duration? longBreak,
       int? longBreakInterval,
-      bool? isPlaySound}) {
+      bool? isPlaySound,
+      int? selectedRadioButton}) {
     return PomodoroSettingsState(
-      focusSession: focusSession ?? this.focusSession,
-      shortBreak: shortBreak ?? this.shortBreak,
-      longBreak: longBreak ?? this.longBreak,
-      longBreakInterval: longBreakInterval ?? this.longBreakInterval,
-      isPlaySound: isPlaySound ?? this.isPlaySound,
-    );
+        focusSession: focusSession ?? this.focusSession,
+        shortBreak: shortBreak ?? this.shortBreak,
+        longBreak: longBreak ?? this.longBreak,
+        longBreakInterval: longBreakInterval ?? this.longBreakInterval,
+        isPlaySound: isPlaySound ?? this.isPlaySound,
+        selectedRadioButton: selectedRadioButton ?? this.selectedRadioButton);
   }
 
   factory PomodoroSettingsState.initial() {
     return PomodoroSettingsState(
-      focusSession: const Duration(minutes: 25, seconds: 0),
-      shortBreak: const Duration(minutes: 5),
-      longBreak: const Duration(minutes: 15),
-      longBreakInterval: 4,
-      isPlaySound: true,
-    );
+        focusSession: const Duration(minutes: 25, seconds: 0),
+        shortBreak: const Duration(minutes: 5),
+        longBreak: const Duration(minutes: 15),
+        longBreakInterval: 4,
+        isPlaySound: false,
+        selectedRadioButton: 1);
   }
 }
 
@@ -66,8 +69,6 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
       ref
           .read(pomodoroTimerProvider.notifier)
           .setSelectedPomodoroTime(newFocusSession);
-
-      
     }
   }
 
@@ -104,20 +105,37 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
 
   void setIsPlaySound(bool isPlaySound) {
     state = state.copyWith(isPlaySound: isPlaySound);
+    playSelectedSound();
   }
 
-  void playClockTickSound() {
-    AudioPlayer player = AudioPlayer();
-    if (state.isPlaySound) {
-      player.play(AssetSource(clockTickSound, mimeType: 'audio/mp3'));
+  // void playClockTickSound() {
+  //   AudioPlayer player = AudioPlayer();
+  //   if (state.isPlaySound) {
+  //     player.play(AssetSource(clockTickSound, mimeType: 'audio/mp3'));
+  //   } else {
+  //     player.stop();
+  //   }
+  // }
+
+  void playSelectedSound() {
+    final isRunning = ref.read(pomodoroTimerProvider).isRunning;
+
+    if (state.isPlaySound && isRunning) {
+      AudioService().playSound(FocusSoundsList[state.selectedRadioButton - 1]);
     } else {
-      player.stop();
+      AudioService().stopSound();
     }
   }
 
   void playAlarmSound() {
-    AudioPlayer player = AudioPlayer();
-    player.play(AssetSource(alarmSound, mimeType: 'audio/mp3'));
+    AudioService().playSound(alarmSound);
+    // AudioPlayer player = AudioPlayer();
+    // player.play(AssetSource(alarmSound, mimeType: 'audio/mp3'));
+  }
+
+  void setSelectedRadioButton(int selectedRadioButton) {
+    state = state.copyWith(selectedRadioButton: selectedRadioButton);
+    playSelectedSound();
   }
 }
 
