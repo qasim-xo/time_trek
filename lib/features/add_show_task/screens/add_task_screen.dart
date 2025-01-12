@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
+import 'package:project_management_app/features/add_show_task/widgets/reminder_dialog_box_widget.dart';
 import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/shared/widgets/custom_textfield.dart';
 
@@ -41,6 +42,9 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     final selectedDate = ref.watch(taskProvider).selectedDate;
     final selectedOption = ref.watch(taskProvider).priority;
 
+    // final reminderTime = ref.watch(taskProvider).reminderTime;
+    // final reminderDate = ref.watch(taskProvider).reminderDate;
+
     return Scaffold(
       appBar: AppBar(
         title: widget.task != null
@@ -53,7 +57,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
           children: [
             TextField(
               controller: taskTitleController,
-              obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Title',
@@ -62,7 +65,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: taskDescriptionController,
-              obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Description',
@@ -134,7 +136,6 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                     onTap: () {
                       showDatePicker(
                         context: context,
-                        initialDate: selectedDate,
                         firstDate: currentTime,
                         lastDate: DateTime(3000),
                       ).then((date) {
@@ -147,6 +148,41 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final reminderTime = ref.watch(taskProvider).reminderTime;
+                final reminderDate = ref.watch(taskProvider).reminderDate;
+
+                debugPrint(
+                    "reminder time = ${reminderTime} and reminder date = ${reminderDate}");
+
+                return TextField(
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    suffixIcon: InkWell(
+                        onTap: () {
+                          ref.read(taskProvider.notifier).setReminderDate(null);
+                          ref.read(taskProvider.notifier).setReminderTime(null);
+                        },
+                        child: const Icon(Icons.notifications)),
+                    hintText: reminderDate == null && reminderTime == null
+                        ? 'Not set'
+                        : '${reminderDate!.toMMMDD()} ${reminderTime?.format(context) ?? ''}',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    border: OutlineInputBorder(),
+                    labelText: 'Reminder',
+                  ),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ReminderDialogBoxWidget();
+                        });
+                  },
+                );
+              },
             ),
             const SizedBox(height: 16),
             ElevatedButton(

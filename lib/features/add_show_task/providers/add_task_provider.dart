@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
@@ -15,6 +16,8 @@ class TaskState {
   String title;
   String desc;
   String projectId;
+  DateTime? reminderDate;
+  TimeOfDay? reminderTime;
 
   TaskState(
       {required this.projectId,
@@ -23,16 +26,21 @@ class TaskState {
       required this.priority,
       required this.title,
       required this.desc,
-      required this.filteredTaskList});
+      required this.filteredTaskList,
+      required this.reminderDate,
+      required this.reminderTime});
 
-  TaskState copyWith(
-      {String? projectId,
-      List<Task>? taskList,
-      DateTime? selectedDate,
-      Priority? priority,
-      String? title,
-      String? desc,
-      List<Task>? filteredTaskList}) {
+  TaskState copyWith({
+    String? projectId,
+    List<Task>? taskList,
+    DateTime? selectedDate,
+    Priority? priority,
+    String? title,
+    String? desc,
+    List<Task>? filteredTaskList,
+    DateTime? reminderDate,
+    TimeOfDay? reminderTime,
+  }) {
     return TaskState(
         projectId: projectId ?? this.projectId,
         taskList: taskList ?? this.taskList,
@@ -40,7 +48,9 @@ class TaskState {
         priority: priority ?? this.priority,
         title: title ?? this.title,
         desc: desc ?? this.desc,
-        filteredTaskList: filteredTaskList ?? this.filteredTaskList);
+        reminderDate: reminderDate ?? this.reminderDate,
+        filteredTaskList: filteredTaskList ?? this.filteredTaskList,
+        reminderTime: reminderTime ?? this.reminderTime);
   }
 
   factory TaskState.initial() {
@@ -51,6 +61,8 @@ class TaskState {
         priority: Priority.low,
         title: '',
         desc: '',
+        reminderDate: null,
+        reminderTime: null,
         filteredTaskList: []);
   }
 }
@@ -143,6 +155,14 @@ class TaskNotifier extends Notifier<TaskState> {
 
   void setTaskList(List<Task> tasks) {
     state = state.copyWith(filteredTaskList: tasks);
+  }
+
+  void setReminderDate(DateTime? date) {
+    state = state.copyWith(reminderDate: date);
+  }
+
+  void setReminderTime(TimeOfDay? time) {
+    state = state.copyWith(reminderTime: time);
   }
 }
 
