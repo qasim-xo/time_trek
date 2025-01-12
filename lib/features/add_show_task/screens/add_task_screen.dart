@@ -163,13 +163,13 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   decoration: InputDecoration(
                     suffixIcon: InkWell(
                         onTap: () {
-                          ref.read(taskProvider.notifier).setReminderDate(null);
-                          ref.read(taskProvider.notifier).setReminderTime(null);
+                          ref
+                              .read(taskProvider.notifier)
+                              .resetReminderDateAndReminderTime();
                         },
                         child: const Icon(Icons.notifications)),
-                    hintText: reminderDate == null && reminderTime == null
-                        ? 'Not set'
-                        : '${reminderDate!.toMMMDD()} ${reminderTime?.format(context) ?? ''}',
+                    hintText:
+                        '${reminderDate ?? 'Not Set'} ${reminderTime?.format(context) ?? ''}',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(),
                     labelText: 'Reminder',

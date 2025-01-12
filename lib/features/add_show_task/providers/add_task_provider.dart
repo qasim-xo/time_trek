@@ -42,15 +42,16 @@ class TaskState {
     TimeOfDay? reminderTime,
   }) {
     return TaskState(
-        projectId: projectId ?? this.projectId,
-        taskList: taskList ?? this.taskList,
-        selectedDate: selectedDate ?? this.selectedDate,
-        priority: priority ?? this.priority,
-        title: title ?? this.title,
-        desc: desc ?? this.desc,
-        reminderDate: reminderDate ?? this.reminderDate,
-        filteredTaskList: filteredTaskList ?? this.filteredTaskList,
-        reminderTime: reminderTime ?? this.reminderTime);
+      projectId: projectId ?? this.projectId,
+      taskList: taskList ?? this.taskList,
+      selectedDate: selectedDate ?? this.selectedDate,
+      priority: priority ?? this.priority,
+      title: title ?? this.title,
+      desc: desc ?? this.desc,
+      filteredTaskList: filteredTaskList ?? this.filteredTaskList,
+      reminderTime: reminderTime ?? this.reminderTime,
+      reminderDate: reminderDate ?? this.reminderDate,
+    );
   }
 
   factory TaskState.initial() {
@@ -163,6 +164,10 @@ class TaskNotifier extends Notifier<TaskState> {
 
   void setReminderTime(TimeOfDay? time) {
     state = state.copyWith(reminderTime: time);
+  }
+
+  void resetReminderDateAndReminderTime() {
+    state = state.copyWith(reminderDate: null, reminderTime: null);
   }
 }
 
