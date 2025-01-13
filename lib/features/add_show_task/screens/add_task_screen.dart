@@ -30,6 +30,14 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
         taskDescriptionController.text = widget.task!.taskDesc;
         ref.read(taskProvider.notifier).onDateSelected(widget.task!.dueDate);
         ref.read(taskProvider.notifier).onOptionSelected(widget.task!.priority);
+        ref
+            .read(taskProvider.notifier)
+            .setReminderDate(widget.task!.reminderDate);
+        ref.read(taskProvider.notifier).setReminderTime(
+            widget.task!.reminderTime != null
+                ? TimeOfDayConverter().fromSql(widget.task!.reminderTime!)
+                : null);
+        ref.read(taskProvider.notifier).setRepeatCheckBox(widget.task!.repeat);
       } else {
         ref.read(taskProvider.notifier).resetFieldsOnScreenLaunch();
       }
@@ -162,14 +170,27 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   readOnly: true,
                   decoration: InputDecoration(
                     suffixIcon: InkWell(
-                        onTap: () {
-                          ref
-                              .read(taskProvider.notifier)
-                              .resetReminderDateAndReminderTime();
-                        },
+                        onTap: widget.task == null
+                            ? () {
+                                ref
+                                    .read(taskProvider.notifier)
+                                    .resetReminderDateAndReminderTime();
+                              }
+                            : () {
+                                ref
+                                    .read(taskProvider.notifier)
+                                    .resetReminderDateAndReminderTime();
+
+                                ref
+                                    .read(taskProvider.notifier)
+                                    .updateTask(widget.task!.copyWith(
+                                      reminderDate: null,
+                                      reminderTime: null,
+                                    ));
+                              },
                         child: const Icon(Icons.notifications)),
                     hintText:
-                        '${reminderDate ?? 'Not Set'} ${reminderTime?.format(context) ?? ''}',
+                        '${reminderDate?.toMMMDD() ?? 'Not Set'}, ${reminderTime?.format(context) ?? ''}',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(),
                     labelText: 'Reminder',
@@ -195,7 +216,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       dueDate: selectedDate,
                       priority: selectedOption,
                       projectId: widget.task!.projectId,
-                      isCompleted: widget.task!.isCompleted);
+                      isCompleted: widget.task!.isCompleted,
+                      repeat: widget.task!.repeat);
                   ref.read(taskProvider.notifier).updateTask(updatedTask);
                 } else {
                   ref

@@ -16,6 +16,11 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       isCompleted: json['isCompleted'] as bool,
       totalFocusedSessionsInSeconds:
           (json['totalFocusedSessionsInSeconds'] as num?)?.toInt() ?? 0,
+      reminderDate: json['reminderDate'] == null
+          ? null
+          : DateTime.parse(json['reminderDate'] as String),
+      reminderTime: (json['reminderTime'] as num?)?.toInt(),
+      repeat: json['repeat'] as bool,
     );
 
 Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
@@ -28,6 +33,9 @@ Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
       'projectId': instance.projectId,
       'isCompleted': instance.isCompleted,
       'totalFocusedSessionsInSeconds': instance.totalFocusedSessionsInSeconds,
+      'reminderDate': instance.reminderDate?.toIso8601String(),
+      'reminderTime': instance.reminderTime,
+      'repeat': instance.repeat,
     };
 
 const _$PriorityEnumMap = {

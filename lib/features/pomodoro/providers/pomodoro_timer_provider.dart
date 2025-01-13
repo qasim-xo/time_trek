@@ -249,6 +249,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     final focusSession = ref.read(pomodoroSettingsProvider).focusSession;
 
     setIsRunning(false);
+
     state.timer!.cancel();
 
     showFloatingTimerWidget(false);

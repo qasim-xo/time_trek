@@ -2,71 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
+import 'package:project_management_app/features/add_show_task/providers/state_model_classes/task_state.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 // Adjust path as needed
 import 'package:uuid/uuid.dart';
-
-class TaskState {
-  List<Task> taskList;
-  List<Task> filteredTaskList;
-  DateTime selectedDate;
-  Priority priority;
-  String title;
-  String desc;
-  String projectId;
-  DateTime? reminderDate;
-  TimeOfDay? reminderTime;
-
-  TaskState(
-      {required this.projectId,
-      required this.taskList,
-      required this.selectedDate,
-      required this.priority,
-      required this.title,
-      required this.desc,
-      required this.filteredTaskList,
-      required this.reminderDate,
-      required this.reminderTime});
-
-  TaskState copyWith({
-    String? projectId,
-    List<Task>? taskList,
-    DateTime? selectedDate,
-    Priority? priority,
-    String? title,
-    String? desc,
-    List<Task>? filteredTaskList,
-    DateTime? reminderDate,
-    TimeOfDay? reminderTime,
-  }) {
-    return TaskState(
-      projectId: projectId ?? this.projectId,
-      taskList: taskList ?? this.taskList,
-      selectedDate: selectedDate ?? this.selectedDate,
-      priority: priority ?? this.priority,
-      title: title ?? this.title,
-      desc: desc ?? this.desc,
-      filteredTaskList: filteredTaskList ?? this.filteredTaskList,
-      reminderTime: reminderTime ?? this.reminderTime,
-      reminderDate: reminderDate ?? this.reminderDate,
-    );
-  }
-
-  factory TaskState.initial() {
-    return TaskState(
-        projectId: '',
-        taskList: [],
-        selectedDate: DateTime.now(),
-        priority: Priority.low,
-        title: '',
-        desc: '',
-        reminderDate: null,
-        reminderTime: null,
-        filteredTaskList: []);
-  }
-}
 
 class TaskNotifier extends Notifier<TaskState> {
   @override
@@ -83,7 +24,12 @@ class TaskNotifier extends Notifier<TaskState> {
         dueDate: state.selectedDate,
         priority: state.priority,
         projectId: state.projectId,
-        isCompleted: false);
+        isCompleted: false,
+        reminderDate: state.reminderDate,
+        reminderTime: state.reminderTime != null
+            ? TimeOfDayConverter().toSql(state.reminderTime!)
+            : null,
+        repeat: state.repeat);
 
     state = state.copyWith(
         taskList: [...state.taskList, newTask],
@@ -168,6 +114,10 @@ class TaskNotifier extends Notifier<TaskState> {
 
   void resetReminderDateAndReminderTime() {
     state = state.copyWith(reminderDate: null, reminderTime: null);
+  }
+
+  void setRepeatCheckBox(bool? value) {
+    state = state.copyWith(repeat: value ?? false);
   }
 }
 

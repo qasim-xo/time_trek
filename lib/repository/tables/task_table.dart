@@ -10,7 +10,12 @@ class TaskDatabaseTable extends Table {
   DateTimeColumn get dueDate => dateTime()();
   BoolColumn get isCompleted => boolean()();
   IntColumn get status => intEnum<Priority>()();
-  IntColumn get totalFocusedSessionsInSeconds => integer().withDefault(Constant(0))(); 
+  IntColumn get totalFocusedSessionsInSeconds =>
+      integer().withDefault(Constant(0))();
   TextColumn get projectId =>
       text().references(ProjectDatabaseTable, #projectId)();
+  DateTimeColumn get reminderDate => dateTime().nullable()();
+  IntColumn get reminderTime =>
+      integer().map(TimeOfDayConverter()).nullable()();
+  BoolColumn get repeat => boolean().withDefault(Constant(false))();
 }

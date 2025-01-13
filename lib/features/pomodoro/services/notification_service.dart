@@ -27,6 +27,16 @@ class NotificationService {
     subtitle: 'Timer Notification', // Optional subtitle
   );
 
+  AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+    'channel_id', // Channel ID
+    'channel_name', // Channel name
+    channelDescription: 'Your channel description',
+    importance: Importance.high,
+    priority: Priority.high,
+    ticker: 'ticker',
+  );
+
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -52,4 +62,27 @@ class NotificationService {
   void cancelNotification(int notificationId) {
     flutterLocalNotificationsPlugin.cancel(notificationId);
   }
+
+  // Future<void> scheduleNotification() async {
+  //   // Set the notification details
+
+  //   NotificationDetails notificationDetails =
+  //       NotificationDetails(android: androidNotificationDetails);
+
+  //   // Create a time in the future for the notification (e.g., 10 seconds from now)
+  //   final DateTime scheduledTime = DateTime.now().add(Duration(seconds: 10));
+
+  //   // Schedule the notification
+  //   await flutterLocalNotificationsPlugin.zonedSchedule(
+  //     0, // Notification ID
+  //     'Scheduled Notification',
+  //     'This is a scheduled notification.',
+  //     scheduledTime,
+  //     notificationDetails,
+  //     uiLocalNotificationDateInterpretation:
+  //         UILocalNotificationDateInterpretation.wallClockTime,
+  //     matchDateTimeComponents: DateTimeComponents
+  //         .time, androidScheduleMode: ,
+  //   );
+  // }
 }

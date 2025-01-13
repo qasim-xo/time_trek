@@ -11,23 +11,12 @@ class ReminderDialogBoxWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reminderTime = ref.watch(taskProvider).reminderTime;
     final reminderDate = ref.watch(taskProvider).reminderDate;
+    final repeat = ref.watch(taskProvider).repeat;
 
     // print(
     //     "reminder time = ${reminderTime} and reminder date = ${reminderDate}");
 
     return AlertDialog(
-      actions: [
-        TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("Cancel")),
-        TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('OK'))
-      ],
       title: Text("Select Reminder"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -78,8 +67,10 @@ class ReminderDialogBoxWidget extends ConsumerWidget {
           ),
           CheckboxListTile(
             contentPadding: EdgeInsets.all(0),
-            value: true,
-            onChanged: null,
+            value: repeat,
+            onChanged: (bool? value) {
+              ref.read(taskProvider.notifier).setRepeatCheckBox(value);
+            },
             title: Text("Repeat?"),
           )
         ],
