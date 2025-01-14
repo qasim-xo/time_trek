@@ -63,7 +63,9 @@ extension TaskToCompanion on Task {
         projectId: Value(projectId),
         isCompleted: Value(isCompleted),
         reminderDate: Value(reminderDate),
-        reminderTime: Value(TimeOfDayConverter().fromSql(reminderTime!)),
+        reminderTime: Value(reminderTime != null
+            ? TimeOfDayConverter().fromSql(reminderTime!)
+            : null),
         repeat: Value(repeat),
         totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds));
   }
