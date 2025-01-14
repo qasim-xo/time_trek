@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -38,6 +41,7 @@ class NotificationService {
   );
 
   Future<void> initialize() async {
+    tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
@@ -61,6 +65,42 @@ class NotificationService {
 
   void cancelNotification(int notificationId) {
     flutterLocalNotificationsPlugin.cancel(notificationId);
+  }
+
+  void scheduleNotification(DateTime date, TimeOfDay time) async {
+    final combinedDateTime = combineDateTime(date, time);
+
+    // Convert DateTime to TZDateTime
+    final tz.TZDateTime scheduledDate =
+        tz.TZDateTime.from(combinedDateTime, tz.local);
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'Scheduled Notification',
+      'This notification is based on DateTime and TimeOfDay.',
+      scheduledDate,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'your_channel_id',
+          'your_channel_name',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
+
+  DateTime combineDateTime(DateTime date, TimeOfDay time) {
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
   }
 
   // Future<void> scheduleNotification() async {

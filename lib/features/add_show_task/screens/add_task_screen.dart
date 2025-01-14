@@ -40,6 +40,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
         ref.read(taskProvider.notifier).setRepeatCheckBox(widget.task!.repeat);
       } else {
         ref.read(taskProvider.notifier).resetFieldsOnScreenLaunch();
+        ref.read(taskProvider.notifier).resetReminderDateAndReminderTime();
       }
     });
     super.initState();

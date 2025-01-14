@@ -17,7 +17,7 @@ class PomodoroTimerState {
   String taskId;
   bool isRunning;
   PomodoroTimerType pomodoroTimerType;
-  Timer? timer;
+  Timer timer;
   Duration? pomodoroTime;
   int? countFocusSessions;
   Duration selectedPomodoroTime;
@@ -69,7 +69,7 @@ class PomodoroTimerState {
         taskId: '',
         countFocusSessions: 0,
         isRunning: false,
-        timer: null,
+        timer: Timer(Duration.zero, () {}),
         pomodoroTime: const Duration(minutes: 25, seconds: 0),
         pomodoroTimerType: PomodoroTimerType.focusSession);
   }
