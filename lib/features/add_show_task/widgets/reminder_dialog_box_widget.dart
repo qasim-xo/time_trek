@@ -19,7 +19,19 @@ class ReminderDialogBoxWidget extends ConsumerWidget {
 
     return AlertDialog(
       actions: [
-        TextButton(onPressed: () {}, child: Text("Save")),
+        TextButton(
+            onPressed: () {
+              final reminderDateTime = DateTime(
+                  reminderDate!.year,
+                  reminderDate.month,
+                  reminderDate.day,
+                  reminderTime!.hour,
+                  reminderTime.minute);
+              ref
+                  .read(taskProvider.notifier)
+                  .setReminderDateTime(reminderDateTime);
+            },
+            child: Text("Save")),
         TextButton(
             onPressed: () {
               context.router.maybePop();

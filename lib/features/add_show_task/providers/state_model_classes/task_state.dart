@@ -17,6 +17,7 @@ abstract class TaskState with _$TaskState {
     required String projectId,
     DateTime? reminderDate,
     TimeOfDay? reminderTime,
+    DateTime? reminderDateTime,
     required bool repeat,
   }) = _TaskState;
 

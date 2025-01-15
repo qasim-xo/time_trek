@@ -28,8 +28,7 @@ mixin _$Task {
   String get projectId => throw _privateConstructorUsedError;
   bool get isCompleted => throw _privateConstructorUsedError;
   int get totalFocusedSessionsInSeconds => throw _privateConstructorUsedError;
-  DateTime? get reminderDate => throw _privateConstructorUsedError;
-  int? get reminderTime => throw _privateConstructorUsedError;
+  DateTime? get reminderDateTime => throw _privateConstructorUsedError;
   bool get repeat => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,8 +50,7 @@ abstract class $TaskCopyWith<$Res> {
       String projectId,
       bool isCompleted,
       int totalFocusedSessionsInSeconds,
-      DateTime? reminderDate,
-      int? reminderTime,
+      DateTime? reminderDateTime,
       bool repeat});
 }
 
@@ -77,8 +75,7 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
     Object? projectId = null,
     Object? isCompleted = null,
     Object? totalFocusedSessionsInSeconds = null,
-    Object? reminderDate = freezed,
-    Object? reminderTime = freezed,
+    Object? reminderDateTime = freezed,
     Object? repeat = null,
   }) {
     return _then(_value.copyWith(
@@ -114,14 +111,10 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
           ? _value.totalFocusedSessionsInSeconds
           : totalFocusedSessionsInSeconds // ignore: cast_nullable_to_non_nullable
               as int,
-      reminderDate: freezed == reminderDate
-          ? _value.reminderDate
-          : reminderDate // ignore: cast_nullable_to_non_nullable
+      reminderDateTime: freezed == reminderDateTime
+          ? _value.reminderDateTime
+          : reminderDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      reminderTime: freezed == reminderTime
-          ? _value.reminderTime
-          : reminderTime // ignore: cast_nullable_to_non_nullable
-              as int?,
       repeat: null == repeat
           ? _value.repeat
           : repeat // ignore: cast_nullable_to_non_nullable
@@ -146,8 +139,7 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
       String projectId,
       bool isCompleted,
       int totalFocusedSessionsInSeconds,
-      DateTime? reminderDate,
-      int? reminderTime,
+      DateTime? reminderDateTime,
       bool repeat});
 }
 
@@ -169,8 +161,7 @@ class __$$TaskImplCopyWithImpl<$Res>
     Object? projectId = null,
     Object? isCompleted = null,
     Object? totalFocusedSessionsInSeconds = null,
-    Object? reminderDate = freezed,
-    Object? reminderTime = freezed,
+    Object? reminderDateTime = freezed,
     Object? repeat = null,
   }) {
     return _then(_$TaskImpl(
@@ -206,14 +197,10 @@ class __$$TaskImplCopyWithImpl<$Res>
           ? _value.totalFocusedSessionsInSeconds
           : totalFocusedSessionsInSeconds // ignore: cast_nullable_to_non_nullable
               as int,
-      reminderDate: freezed == reminderDate
-          ? _value.reminderDate
-          : reminderDate // ignore: cast_nullable_to_non_nullable
+      reminderDateTime: freezed == reminderDateTime
+          ? _value.reminderDateTime
+          : reminderDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      reminderTime: freezed == reminderTime
-          ? _value.reminderTime
-          : reminderTime // ignore: cast_nullable_to_non_nullable
-              as int?,
       repeat: null == repeat
           ? _value.repeat
           : repeat // ignore: cast_nullable_to_non_nullable
@@ -234,8 +221,7 @@ class _$TaskImpl implements _Task {
       required this.projectId,
       required this.isCompleted,
       this.totalFocusedSessionsInSeconds = 0,
-      this.reminderDate,
-      this.reminderTime,
+      this.reminderDateTime,
       required this.repeat});
 
   factory _$TaskImpl.fromJson(Map<String, dynamic> json) =>
@@ -259,15 +245,13 @@ class _$TaskImpl implements _Task {
   @JsonKey()
   final int totalFocusedSessionsInSeconds;
   @override
-  final DateTime? reminderDate;
-  @override
-  final int? reminderTime;
+  final DateTime? reminderDateTime;
   @override
   final bool repeat;
 
   @override
   String toString() {
-    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId, isCompleted: $isCompleted, totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, reminderDate: $reminderDate, reminderTime: $reminderTime, repeat: $repeat)';
+    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId, isCompleted: $isCompleted, totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, reminderDateTime: $reminderDateTime, repeat: $repeat)';
   }
 
   @override
@@ -291,10 +275,8 @@ class _$TaskImpl implements _Task {
                     totalFocusedSessionsInSeconds) ||
                 other.totalFocusedSessionsInSeconds ==
                     totalFocusedSessionsInSeconds) &&
-            (identical(other.reminderDate, reminderDate) ||
-                other.reminderDate == reminderDate) &&
-            (identical(other.reminderTime, reminderTime) ||
-                other.reminderTime == reminderTime) &&
+            (identical(other.reminderDateTime, reminderDateTime) ||
+                other.reminderDateTime == reminderDateTime) &&
             (identical(other.repeat, repeat) || other.repeat == repeat));
   }
 
@@ -310,8 +292,7 @@ class _$TaskImpl implements _Task {
       projectId,
       isCompleted,
       totalFocusedSessionsInSeconds,
-      reminderDate,
-      reminderTime,
+      reminderDateTime,
       repeat);
 
   @JsonKey(ignore: true)
@@ -338,8 +319,7 @@ abstract class _Task implements Task {
       required final String projectId,
       required final bool isCompleted,
       final int totalFocusedSessionsInSeconds,
-      final DateTime? reminderDate,
-      final int? reminderTime,
+      final DateTime? reminderDateTime,
       required final bool repeat}) = _$TaskImpl;
 
   factory _Task.fromJson(Map<String, dynamic> json) = _$TaskImpl.fromJson;
@@ -361,9 +341,7 @@ abstract class _Task implements Task {
   @override
   int get totalFocusedSessionsInSeconds;
   @override
-  DateTime? get reminderDate;
-  @override
-  int? get reminderTime;
+  DateTime? get reminderDateTime;
   @override
   bool get repeat;
   @override

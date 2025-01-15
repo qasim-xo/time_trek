@@ -62,10 +62,7 @@ extension TaskToCompanion on Task {
         status: Value(priority),
         projectId: Value(projectId),
         isCompleted: Value(isCompleted),
-        reminderDate: Value(reminderDate),
-        reminderTime: Value(reminderTime != null
-            ? TimeOfDayConverter().fromSql(reminderTime!)
-            : null),
+        reminderDateTime: Value(reminderDateTime),
         repeat: Value(repeat),
         totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds));
   }
@@ -99,10 +96,7 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
           dueDate: taskData.dueDate,
           priority: taskData.status,
           projectId: taskData.projectId,
-          reminderDate: taskData.reminderDate,
-          reminderTime: taskData.reminderTime != null
-              ? TimeOfDayConverter().toSql(taskData.reminderTime!)
-              : null,
+          reminderDateTime: taskData.reminderDateTime,
           isCompleted: taskData.isCompleted,
           repeat: taskData.repeat);
     }).toList();

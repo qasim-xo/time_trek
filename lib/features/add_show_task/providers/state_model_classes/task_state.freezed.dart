@@ -25,6 +25,7 @@ mixin _$TaskState {
   String get projectId => throw _privateConstructorUsedError;
   DateTime? get reminderDate => throw _privateConstructorUsedError;
   TimeOfDay? get reminderTime => throw _privateConstructorUsedError;
+  DateTime? get reminderDateTime => throw _privateConstructorUsedError;
   bool get repeat => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -47,6 +48,7 @@ abstract class $TaskStateCopyWith<$Res> {
       String projectId,
       DateTime? reminderDate,
       TimeOfDay? reminderTime,
+      DateTime? reminderDateTime,
       bool repeat});
 }
 
@@ -72,6 +74,7 @@ class _$TaskStateCopyWithImpl<$Res, $Val extends TaskState>
     Object? projectId = null,
     Object? reminderDate = freezed,
     Object? reminderTime = freezed,
+    Object? reminderDateTime = freezed,
     Object? repeat = null,
   }) {
     return _then(_value.copyWith(
@@ -111,6 +114,10 @@ class _$TaskStateCopyWithImpl<$Res, $Val extends TaskState>
           ? _value.reminderTime
           : reminderTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
+      reminderDateTime: freezed == reminderDateTime
+          ? _value.reminderDateTime
+          : reminderDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       repeat: null == repeat
           ? _value.repeat
           : repeat // ignore: cast_nullable_to_non_nullable
@@ -137,6 +144,7 @@ abstract class _$$TaskStateImplCopyWith<$Res>
       String projectId,
       DateTime? reminderDate,
       TimeOfDay? reminderTime,
+      DateTime? reminderDateTime,
       bool repeat});
 }
 
@@ -160,6 +168,7 @@ class __$$TaskStateImplCopyWithImpl<$Res>
     Object? projectId = null,
     Object? reminderDate = freezed,
     Object? reminderTime = freezed,
+    Object? reminderDateTime = freezed,
     Object? repeat = null,
   }) {
     return _then(_$TaskStateImpl(
@@ -199,6 +208,10 @@ class __$$TaskStateImplCopyWithImpl<$Res>
           ? _value.reminderTime
           : reminderTime // ignore: cast_nullable_to_non_nullable
               as TimeOfDay?,
+      reminderDateTime: freezed == reminderDateTime
+          ? _value.reminderDateTime
+          : reminderDateTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       repeat: null == repeat
           ? _value.repeat
           : repeat // ignore: cast_nullable_to_non_nullable
@@ -220,6 +233,7 @@ class _$TaskStateImpl implements _TaskState {
       required this.projectId,
       this.reminderDate,
       this.reminderTime,
+      this.reminderDateTime,
       required this.repeat})
       : _taskList = taskList,
         _filteredTaskList = filteredTaskList;
@@ -256,11 +270,13 @@ class _$TaskStateImpl implements _TaskState {
   @override
   final TimeOfDay? reminderTime;
   @override
+  final DateTime? reminderDateTime;
+  @override
   final bool repeat;
 
   @override
   String toString() {
-    return 'TaskState(taskList: $taskList, filteredTaskList: $filteredTaskList, selectedDate: $selectedDate, priority: $priority, title: $title, desc: $desc, projectId: $projectId, reminderDate: $reminderDate, reminderTime: $reminderTime, repeat: $repeat)';
+    return 'TaskState(taskList: $taskList, filteredTaskList: $filteredTaskList, selectedDate: $selectedDate, priority: $priority, title: $title, desc: $desc, projectId: $projectId, reminderDate: $reminderDate, reminderTime: $reminderTime, reminderDateTime: $reminderDateTime, repeat: $repeat)';
   }
 
   @override
@@ -283,6 +299,8 @@ class _$TaskStateImpl implements _TaskState {
                 other.reminderDate == reminderDate) &&
             (identical(other.reminderTime, reminderTime) ||
                 other.reminderTime == reminderTime) &&
+            (identical(other.reminderDateTime, reminderDateTime) ||
+                other.reminderDateTime == reminderDateTime) &&
             (identical(other.repeat, repeat) || other.repeat == repeat));
   }
 
@@ -298,6 +316,7 @@ class _$TaskStateImpl implements _TaskState {
       projectId,
       reminderDate,
       reminderTime,
+      reminderDateTime,
       repeat);
 
   @JsonKey(ignore: true)
@@ -318,6 +337,7 @@ abstract class _TaskState implements TaskState {
       required final String projectId,
       final DateTime? reminderDate,
       final TimeOfDay? reminderTime,
+      final DateTime? reminderDateTime,
       required final bool repeat}) = _$TaskStateImpl;
 
   @override
@@ -338,6 +358,8 @@ abstract class _TaskState implements TaskState {
   DateTime? get reminderDate;
   @override
   TimeOfDay? get reminderTime;
+  @override
+  DateTime? get reminderDateTime;
   @override
   bool get repeat;
   @override

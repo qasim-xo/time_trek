@@ -301,20 +301,12 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES project_database_table (project_id)'));
-  static const VerificationMeta _reminderDateMeta =
-      const VerificationMeta('reminderDate');
+  static const VerificationMeta _reminderDateTimeMeta =
+      const VerificationMeta('reminderDateTime');
   @override
-  late final GeneratedColumn<DateTime> reminderDate = GeneratedColumn<DateTime>(
-      'reminder_date', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _reminderTimeMeta =
-      const VerificationMeta('reminderTime');
-  @override
-  late final GeneratedColumnWithTypeConverter<TimeOfDay?, int> reminderTime =
-      GeneratedColumn<int>('reminder_time', aliasedName, true,
-              type: DriftSqlType.int, requiredDuringInsert: false)
-          .withConverter<TimeOfDay?>(
-              $TaskDatabaseTableTable.$converterreminderTimen);
+  late final GeneratedColumn<DateTime> reminderDateTime =
+      GeneratedColumn<DateTime>('reminder_date_time', aliasedName, true,
+          type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _repeatMeta = const VerificationMeta('repeat');
   @override
   late final GeneratedColumn<bool> repeat = GeneratedColumn<bool>(
@@ -335,8 +327,7 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
         status,
         totalFocusedSessionsInSeconds,
         projectId,
-        reminderDate,
-        reminderTime,
+        reminderDateTime,
         repeat
       ];
   @override
@@ -399,13 +390,12 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
     } else if (isInserting) {
       context.missing(_projectIdMeta);
     }
-    if (data.containsKey('reminder_date')) {
+    if (data.containsKey('reminder_date_time')) {
       context.handle(
-          _reminderDateMeta,
-          reminderDate.isAcceptableOrUnknown(
-              data['reminder_date']!, _reminderDateMeta));
+          _reminderDateTimeMeta,
+          reminderDateTime.isAcceptableOrUnknown(
+              data['reminder_date_time']!, _reminderDateTimeMeta));
     }
-    context.handle(_reminderTimeMeta, const VerificationResult.success());
     if (data.containsKey('repeat')) {
       context.handle(_repeatMeta,
           repeat.isAcceptableOrUnknown(data['repeat']!, _repeatMeta));
@@ -439,11 +429,8 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
           data['${effectivePrefix}total_focused_sessions_in_seconds'])!,
       projectId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}project_id'])!,
-      reminderDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}reminder_date']),
-      reminderTime: $TaskDatabaseTableTable.$converterreminderTimen.fromSql(
-          attachedDatabase.typeMapping
-              .read(DriftSqlType.int, data['${effectivePrefix}reminder_time'])),
+      reminderDateTime: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}reminder_date_time']),
       repeat: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}repeat'])!,
     );
@@ -456,10 +443,6 @@ class $TaskDatabaseTableTable extends TaskDatabaseTable
 
   static JsonTypeConverter2<Priority, int, int> $converterstatus =
       const EnumIndexConverter<Priority>(Priority.values);
-  static TypeConverter<TimeOfDay, int> $converterreminderTime =
-      TimeOfDayConverter();
-  static TypeConverter<TimeOfDay?, int?> $converterreminderTimen =
-      NullAwareTypeConverter.wrap($converterreminderTime);
 }
 
 class TaskDatabaseTableData extends DataClass
@@ -473,8 +456,7 @@ class TaskDatabaseTableData extends DataClass
   final Priority status;
   final int totalFocusedSessionsInSeconds;
   final String projectId;
-  final DateTime? reminderDate;
-  final TimeOfDay? reminderTime;
+  final DateTime? reminderDateTime;
   final bool repeat;
   const TaskDatabaseTableData(
       {required this.id,
@@ -486,8 +468,7 @@ class TaskDatabaseTableData extends DataClass
       required this.status,
       required this.totalFocusedSessionsInSeconds,
       required this.projectId,
-      this.reminderDate,
-      this.reminderTime,
+      this.reminderDateTime,
       required this.repeat});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -505,12 +486,8 @@ class TaskDatabaseTableData extends DataClass
     map['total_focused_sessions_in_seconds'] =
         Variable<int>(totalFocusedSessionsInSeconds);
     map['project_id'] = Variable<String>(projectId);
-    if (!nullToAbsent || reminderDate != null) {
-      map['reminder_date'] = Variable<DateTime>(reminderDate);
-    }
-    if (!nullToAbsent || reminderTime != null) {
-      map['reminder_time'] = Variable<int>(
-          $TaskDatabaseTableTable.$converterreminderTimen.toSql(reminderTime));
+    if (!nullToAbsent || reminderDateTime != null) {
+      map['reminder_date_time'] = Variable<DateTime>(reminderDateTime);
     }
     map['repeat'] = Variable<bool>(repeat);
     return map;
@@ -527,12 +504,9 @@ class TaskDatabaseTableData extends DataClass
       status: Value(status),
       totalFocusedSessionsInSeconds: Value(totalFocusedSessionsInSeconds),
       projectId: Value(projectId),
-      reminderDate: reminderDate == null && nullToAbsent
+      reminderDateTime: reminderDateTime == null && nullToAbsent
           ? const Value.absent()
-          : Value(reminderDate),
-      reminderTime: reminderTime == null && nullToAbsent
-          ? const Value.absent()
-          : Value(reminderTime),
+          : Value(reminderDateTime),
       repeat: Value(repeat),
     );
   }
@@ -552,8 +526,8 @@ class TaskDatabaseTableData extends DataClass
       totalFocusedSessionsInSeconds:
           serializer.fromJson<int>(json['totalFocusedSessionsInSeconds']),
       projectId: serializer.fromJson<String>(json['projectId']),
-      reminderDate: serializer.fromJson<DateTime?>(json['reminderDate']),
-      reminderTime: serializer.fromJson<TimeOfDay?>(json['reminderTime']),
+      reminderDateTime:
+          serializer.fromJson<DateTime?>(json['reminderDateTime']),
       repeat: serializer.fromJson<bool>(json['repeat']),
     );
   }
@@ -572,8 +546,7 @@ class TaskDatabaseTableData extends DataClass
       'totalFocusedSessionsInSeconds':
           serializer.toJson<int>(totalFocusedSessionsInSeconds),
       'projectId': serializer.toJson<String>(projectId),
-      'reminderDate': serializer.toJson<DateTime?>(reminderDate),
-      'reminderTime': serializer.toJson<TimeOfDay?>(reminderTime),
+      'reminderDateTime': serializer.toJson<DateTime?>(reminderDateTime),
       'repeat': serializer.toJson<bool>(repeat),
     };
   }
@@ -588,8 +561,7 @@ class TaskDatabaseTableData extends DataClass
           Priority? status,
           int? totalFocusedSessionsInSeconds,
           String? projectId,
-          Value<DateTime?> reminderDate = const Value.absent(),
-          Value<TimeOfDay?> reminderTime = const Value.absent(),
+          Value<DateTime?> reminderDateTime = const Value.absent(),
           bool? repeat}) =>
       TaskDatabaseTableData(
         id: id ?? this.id,
@@ -602,10 +574,9 @@ class TaskDatabaseTableData extends DataClass
         totalFocusedSessionsInSeconds:
             totalFocusedSessionsInSeconds ?? this.totalFocusedSessionsInSeconds,
         projectId: projectId ?? this.projectId,
-        reminderDate:
-            reminderDate.present ? reminderDate.value : this.reminderDate,
-        reminderTime:
-            reminderTime.present ? reminderTime.value : this.reminderTime,
+        reminderDateTime: reminderDateTime.present
+            ? reminderDateTime.value
+            : this.reminderDateTime,
         repeat: repeat ?? this.repeat,
       );
   TaskDatabaseTableData copyWithCompanion(TaskDatabaseTableCompanion data) {
@@ -622,12 +593,9 @@ class TaskDatabaseTableData extends DataClass
           ? data.totalFocusedSessionsInSeconds.value
           : this.totalFocusedSessionsInSeconds,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
-      reminderDate: data.reminderDate.present
-          ? data.reminderDate.value
-          : this.reminderDate,
-      reminderTime: data.reminderTime.present
-          ? data.reminderTime.value
-          : this.reminderTime,
+      reminderDateTime: data.reminderDateTime.present
+          ? data.reminderDateTime.value
+          : this.reminderDateTime,
       repeat: data.repeat.present ? data.repeat.value : this.repeat,
     );
   }
@@ -645,8 +613,7 @@ class TaskDatabaseTableData extends DataClass
           ..write(
               'totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, ')
           ..write('projectId: $projectId, ')
-          ..write('reminderDate: $reminderDate, ')
-          ..write('reminderTime: $reminderTime, ')
+          ..write('reminderDateTime: $reminderDateTime, ')
           ..write('repeat: $repeat')
           ..write(')'))
         .toString();
@@ -663,8 +630,7 @@ class TaskDatabaseTableData extends DataClass
       status,
       totalFocusedSessionsInSeconds,
       projectId,
-      reminderDate,
-      reminderTime,
+      reminderDateTime,
       repeat);
   @override
   bool operator ==(Object other) =>
@@ -680,8 +646,7 @@ class TaskDatabaseTableData extends DataClass
           other.totalFocusedSessionsInSeconds ==
               this.totalFocusedSessionsInSeconds &&
           other.projectId == this.projectId &&
-          other.reminderDate == this.reminderDate &&
-          other.reminderTime == this.reminderTime &&
+          other.reminderDateTime == this.reminderDateTime &&
           other.repeat == this.repeat);
 }
 
@@ -696,8 +661,7 @@ class TaskDatabaseTableCompanion
   final Value<Priority> status;
   final Value<int> totalFocusedSessionsInSeconds;
   final Value<String> projectId;
-  final Value<DateTime?> reminderDate;
-  final Value<TimeOfDay?> reminderTime;
+  final Value<DateTime?> reminderDateTime;
   final Value<bool> repeat;
   const TaskDatabaseTableCompanion({
     this.id = const Value.absent(),
@@ -709,8 +673,7 @@ class TaskDatabaseTableCompanion
     this.status = const Value.absent(),
     this.totalFocusedSessionsInSeconds = const Value.absent(),
     this.projectId = const Value.absent(),
-    this.reminderDate = const Value.absent(),
-    this.reminderTime = const Value.absent(),
+    this.reminderDateTime = const Value.absent(),
     this.repeat = const Value.absent(),
   });
   TaskDatabaseTableCompanion.insert({
@@ -723,8 +686,7 @@ class TaskDatabaseTableCompanion
     required Priority status,
     this.totalFocusedSessionsInSeconds = const Value.absent(),
     required String projectId,
-    this.reminderDate = const Value.absent(),
-    this.reminderTime = const Value.absent(),
+    this.reminderDateTime = const Value.absent(),
     this.repeat = const Value.absent(),
   })  : taskId = Value(taskId),
         taskTitle = Value(taskTitle),
@@ -743,8 +705,7 @@ class TaskDatabaseTableCompanion
     Expression<int>? status,
     Expression<int>? totalFocusedSessionsInSeconds,
     Expression<String>? projectId,
-    Expression<DateTime>? reminderDate,
-    Expression<int>? reminderTime,
+    Expression<DateTime>? reminderDateTime,
     Expression<bool>? repeat,
   }) {
     return RawValuesInsertable({
@@ -758,8 +719,7 @@ class TaskDatabaseTableCompanion
       if (totalFocusedSessionsInSeconds != null)
         'total_focused_sessions_in_seconds': totalFocusedSessionsInSeconds,
       if (projectId != null) 'project_id': projectId,
-      if (reminderDate != null) 'reminder_date': reminderDate,
-      if (reminderTime != null) 'reminder_time': reminderTime,
+      if (reminderDateTime != null) 'reminder_date_time': reminderDateTime,
       if (repeat != null) 'repeat': repeat,
     });
   }
@@ -774,8 +734,7 @@ class TaskDatabaseTableCompanion
       Value<Priority>? status,
       Value<int>? totalFocusedSessionsInSeconds,
       Value<String>? projectId,
-      Value<DateTime?>? reminderDate,
-      Value<TimeOfDay?>? reminderTime,
+      Value<DateTime?>? reminderDateTime,
       Value<bool>? repeat}) {
     return TaskDatabaseTableCompanion(
       id: id ?? this.id,
@@ -788,8 +747,7 @@ class TaskDatabaseTableCompanion
       totalFocusedSessionsInSeconds:
           totalFocusedSessionsInSeconds ?? this.totalFocusedSessionsInSeconds,
       projectId: projectId ?? this.projectId,
-      reminderDate: reminderDate ?? this.reminderDate,
-      reminderTime: reminderTime ?? this.reminderTime,
+      reminderDateTime: reminderDateTime ?? this.reminderDateTime,
       repeat: repeat ?? this.repeat,
     );
   }
@@ -826,13 +784,8 @@ class TaskDatabaseTableCompanion
     if (projectId.present) {
       map['project_id'] = Variable<String>(projectId.value);
     }
-    if (reminderDate.present) {
-      map['reminder_date'] = Variable<DateTime>(reminderDate.value);
-    }
-    if (reminderTime.present) {
-      map['reminder_time'] = Variable<int>($TaskDatabaseTableTable
-          .$converterreminderTimen
-          .toSql(reminderTime.value));
+    if (reminderDateTime.present) {
+      map['reminder_date_time'] = Variable<DateTime>(reminderDateTime.value);
     }
     if (repeat.present) {
       map['repeat'] = Variable<bool>(repeat.value);
@@ -853,8 +806,7 @@ class TaskDatabaseTableCompanion
           ..write(
               'totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, ')
           ..write('projectId: $projectId, ')
-          ..write('reminderDate: $reminderDate, ')
-          ..write('reminderTime: $reminderTime, ')
+          ..write('reminderDateTime: $reminderDateTime, ')
           ..write('repeat: $repeat')
           ..write(')'))
         .toString();
@@ -1117,8 +1069,7 @@ typedef $$TaskDatabaseTableTableCreateCompanionBuilder
   required Priority status,
   Value<int> totalFocusedSessionsInSeconds,
   required String projectId,
-  Value<DateTime?> reminderDate,
-  Value<TimeOfDay?> reminderTime,
+  Value<DateTime?> reminderDateTime,
   Value<bool> repeat,
 });
 typedef $$TaskDatabaseTableTableUpdateCompanionBuilder
@@ -1132,8 +1083,7 @@ typedef $$TaskDatabaseTableTableUpdateCompanionBuilder
   Value<Priority> status,
   Value<int> totalFocusedSessionsInSeconds,
   Value<String> projectId,
-  Value<DateTime?> reminderDate,
-  Value<TimeOfDay?> reminderTime,
+  Value<DateTime?> reminderDateTime,
   Value<bool> repeat,
 });
 
@@ -1193,13 +1143,9 @@ class $$TaskDatabaseTableTableFilterComposer
       column: $table.totalFocusedSessionsInSeconds,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<DateTime> get reminderDate => $composableBuilder(
-      column: $table.reminderDate, builder: (column) => ColumnFilters(column));
-
-  ColumnWithTypeConverterFilters<TimeOfDay?, TimeOfDay, int> get reminderTime =>
-      $composableBuilder(
-          column: $table.reminderTime,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  ColumnFilters<DateTime> get reminderDateTime => $composableBuilder(
+      column: $table.reminderDateTime,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get repeat => $composableBuilder(
       column: $table.repeat, builder: (column) => ColumnFilters(column));
@@ -1259,12 +1205,8 @@ class $$TaskDatabaseTableTableOrderingComposer
       column: $table.totalFocusedSessionsInSeconds,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<DateTime> get reminderDate => $composableBuilder(
-      column: $table.reminderDate,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get reminderTime => $composableBuilder(
-      column: $table.reminderTime,
+  ColumnOrderings<DateTime> get reminderDateTime => $composableBuilder(
+      column: $table.reminderDateTime,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<bool> get repeat => $composableBuilder(
@@ -1326,12 +1268,8 @@ class $$TaskDatabaseTableTableAnnotationComposer
       column: $table.totalFocusedSessionsInSeconds,
       builder: (column) => column);
 
-  GeneratedColumn<DateTime> get reminderDate => $composableBuilder(
-      column: $table.reminderDate, builder: (column) => column);
-
-  GeneratedColumnWithTypeConverter<TimeOfDay?, int> get reminderTime =>
-      $composableBuilder(
-          column: $table.reminderTime, builder: (column) => column);
+  GeneratedColumn<DateTime> get reminderDateTime => $composableBuilder(
+      column: $table.reminderDateTime, builder: (column) => column);
 
   GeneratedColumn<bool> get repeat =>
       $composableBuilder(column: $table.repeat, builder: (column) => column);
@@ -1392,8 +1330,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             Value<Priority> status = const Value.absent(),
             Value<int> totalFocusedSessionsInSeconds = const Value.absent(),
             Value<String> projectId = const Value.absent(),
-            Value<DateTime?> reminderDate = const Value.absent(),
-            Value<TimeOfDay?> reminderTime = const Value.absent(),
+            Value<DateTime?> reminderDateTime = const Value.absent(),
             Value<bool> repeat = const Value.absent(),
           }) =>
               TaskDatabaseTableCompanion(
@@ -1406,8 +1343,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             status: status,
             totalFocusedSessionsInSeconds: totalFocusedSessionsInSeconds,
             projectId: projectId,
-            reminderDate: reminderDate,
-            reminderTime: reminderTime,
+            reminderDateTime: reminderDateTime,
             repeat: repeat,
           ),
           createCompanionCallback: ({
@@ -1420,8 +1356,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             required Priority status,
             Value<int> totalFocusedSessionsInSeconds = const Value.absent(),
             required String projectId,
-            Value<DateTime?> reminderDate = const Value.absent(),
-            Value<TimeOfDay?> reminderTime = const Value.absent(),
+            Value<DateTime?> reminderDateTime = const Value.absent(),
             Value<bool> repeat = const Value.absent(),
           }) =>
               TaskDatabaseTableCompanion.insert(
@@ -1434,8 +1369,7 @@ class $$TaskDatabaseTableTableTableManager extends RootTableManager<
             status: status,
             totalFocusedSessionsInSeconds: totalFocusedSessionsInSeconds,
             projectId: projectId,
-            reminderDate: reminderDate,
-            reminderTime: reminderTime,
+            reminderDateTime: reminderDateTime,
             repeat: repeat,
           ),
           withReferenceMapper: (p0) => p0

@@ -14,8 +14,6 @@ class TaskDatabaseTable extends Table {
       integer().withDefault(Constant(0))();
   TextColumn get projectId =>
       text().references(ProjectDatabaseTable, #projectId)();
-  DateTimeColumn get reminderDate => dateTime().nullable()();
-  IntColumn get reminderTime =>
-      integer().map(TimeOfDayConverter()).nullable()();
+  DateTimeColumn get reminderDateTime => dateTime().nullable()();
   BoolColumn get repeat => boolean().withDefault(Constant(false))();
 }

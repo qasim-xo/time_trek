@@ -32,11 +32,11 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
         ref.read(taskProvider.notifier).onOptionSelected(widget.task!.priority);
         ref
             .read(taskProvider.notifier)
-            .setReminderDate(widget.task!.reminderDate);
-        ref.read(taskProvider.notifier).setReminderTime(
-            widget.task!.reminderTime != null
-                ? TimeOfDayConverter().fromSql(widget.task!.reminderTime!)
-                : null);
+            .setReminderDate(widget.task!.reminderDateTime);
+        // ref.read(taskProvider.notifier).setReminderTime(
+        //     widget.task!.reminderTime != null
+        //         ? TimeOfDayConverter().fromSql(widget.task!.reminderTime!)
+        //         : null);
         ref.read(taskProvider.notifier).setRepeatCheckBox(widget.task!.repeat);
       } else {
         ref.read(taskProvider.notifier).resetFieldsOnScreenLaunch();
@@ -161,11 +161,14 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             const SizedBox(height: 16),
             Consumer(
               builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                final reminderTime = ref.watch(taskProvider).reminderTime;
-                final reminderDate = ref.watch(taskProvider).reminderDate;
+                // final reminderTime = ref.watch(taskProvider).reminderTime;
+                // final reminderDate = ref.watch(taskProvider).reminderDate;
 
-                debugPrint(
-                    "reminder time = ${reminderTime} and reminder date = ${reminderDate}");
+                final reminderDateTime =
+                    ref.watch(taskProvider).reminderDateTime;
+
+                // debugPrint(
+                //     "reminder time = ${reminderTime} and reminder date = ${reminderDate}");
 
                 return TextField(
                   readOnly: true,
@@ -182,16 +185,14 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                                     .read(taskProvider.notifier)
                                     .resetReminderDateAndReminderTime();
 
-                                ref
-                                    .read(taskProvider.notifier)
-                                    .updateTask(widget.task!.copyWith(
-                                      reminderDate: null,
-                                      reminderTime: null,
-                                    ));
+                                ref.read(taskProvider.notifier).updateTask(
+                                    widget.task!
+                                        .copyWith(reminderDateTime: null));
                               },
                         child: const Icon(Icons.notifications)),
-                    hintText:
-                        '${reminderDate?.toMMMDD() ?? 'Not Set'}, ${reminderTime?.format(context) ?? ''}',
+                    hintText: reminderDateTime == null
+                        ? 'Not set'
+                        : reminderDateTime.toMMMDD(),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(),
                     labelText: 'Reminder',

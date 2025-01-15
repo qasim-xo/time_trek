@@ -26,10 +26,7 @@ class TaskNotifier extends Notifier<TaskState> {
         priority: state.priority,
         projectId: state.projectId,
         isCompleted: false,
-        reminderDate: state.reminderDate,
-        reminderTime: state.reminderTime != null
-            ? TimeOfDayConverter().toSql(state.reminderTime!)
-            : null,
+        reminderDateTime: state.reminderDateTime,
         repeat: state.repeat);
 
     state = state.copyWith(
@@ -107,6 +104,7 @@ class TaskNotifier extends Notifier<TaskState> {
         title: '',
         desc: '',
         selectedDate: DateTime.now(),
+        reminderDateTime: null,
         priority: Priority.high);
   }
 
@@ -116,6 +114,10 @@ class TaskNotifier extends Notifier<TaskState> {
 
   void setReminderDate(DateTime? date) {
     state = state.copyWith(reminderDate: date);
+  }
+
+  void setReminderDateTime(DateTime? dateTime) {
+    state = state.copyWith(reminderDateTime: dateTime);
   }
 
   void setReminderTime(TimeOfDay? time) {

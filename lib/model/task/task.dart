@@ -16,8 +16,7 @@ abstract class Task with _$Task {
     required String projectId,
     required bool isCompleted,
     @Default(0) int totalFocusedSessionsInSeconds,
-    DateTime? reminderDate,
-    int? reminderTime,
+    DateTime? reminderDateTime,
     required bool repeat,
   }) = _Task;
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);

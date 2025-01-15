@@ -16,10 +16,9 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       isCompleted: json['isCompleted'] as bool,
       totalFocusedSessionsInSeconds:
           (json['totalFocusedSessionsInSeconds'] as num?)?.toInt() ?? 0,
-      reminderDate: json['reminderDate'] == null
+      reminderDateTime: json['reminderDateTime'] == null
           ? null
-          : DateTime.parse(json['reminderDate'] as String),
-      reminderTime: (json['reminderTime'] as num?)?.toInt(),
+          : DateTime.parse(json['reminderDateTime'] as String),
       repeat: json['repeat'] as bool,
     );
 
@@ -33,8 +32,7 @@ Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
       'projectId': instance.projectId,
       'isCompleted': instance.isCompleted,
       'totalFocusedSessionsInSeconds': instance.totalFocusedSessionsInSeconds,
-      'reminderDate': instance.reminderDate?.toIso8601String(),
-      'reminderTime': instance.reminderTime,
+      'reminderDateTime': instance.reminderDateTime?.toIso8601String(),
       'repeat': instance.repeat,
     };
 
