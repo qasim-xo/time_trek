@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
@@ -17,6 +18,14 @@ class ReminderDialogBoxWidget extends ConsumerWidget {
     //     "reminder time = ${reminderTime} and reminder date = ${reminderDate}");
 
     return AlertDialog(
+      actions: [
+        TextButton(onPressed: () {}, child: Text("Save")),
+        TextButton(
+            onPressed: () {
+              context.router.maybePop();
+            },
+            child: Text("Cancel"))
+      ],
       title: Text("Select Reminder"),
       content: Column(
         mainAxisSize: MainAxisSize.min,

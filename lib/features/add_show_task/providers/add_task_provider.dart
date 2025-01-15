@@ -4,6 +4,7 @@ import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
 import 'package:project_management_app/features/add_show_task/providers/state_model_classes/task_state.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
+import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/model/task/task.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 // Adjust path as needed
@@ -34,7 +35,16 @@ class TaskNotifier extends Notifier<TaskState> {
     state = state.copyWith(
         taskList: [...state.taskList, newTask],
         filteredTaskList: [...state.filteredTaskList, newTask]);
+
     AppDatabase().taskDao.addTask(newTask.toCompanion());
+
+    if (state.reminderDate != null && state.reminderTime != null) {
+      setNotifications(state.reminderDate!, state.reminderTime!);
+    }
+  }
+
+  void setNotifications(DateTime date, TimeOfDay time) {
+    NotificationService().scheduleNotification(date, time);
   }
 
   void setProjectId(String projectId) {
