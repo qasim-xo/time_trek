@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:project_management_app/main.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -59,6 +60,10 @@ class NotificationService {
             linux: initializationSettingsLinux);
 
     await flutterLocalNotificationsPlugin.initialize(
+      onDidReceiveNotificationResponse: (details) {
+        appRouter.pushNamed('/${details.payload!}');
+        debugPrint("details ${details.payload}");
+      },
       initializationSettings,
     );
   }

@@ -16,15 +16,12 @@ class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes {
     return [
-      AutoRoute(page: ShowProjectRoute.page, initial: true),
-      AutoRoute(page: AddProjectRoute.page),
       AutoRoute(
-        page: ShowTaskRoute.page,
-      ),
-      AutoRoute(
-        page: AddTaskRoute.page,
-      ),
-      AutoRoute(page: PomodoroRoute.page)
+          page: ShowProjectRoute.page, initial: true, path: '/show-project'),
+      AutoRoute(page: AddProjectRoute.page, path: '/add-project'),
+      AutoRoute(page: ShowTaskRoute.page, path: '/show-task'),
+      AutoRoute(page: AddTaskRoute.page, path: '/add-task'),
+      AutoRoute(page: PomodoroRoute.page, path: '/pomodoro')
     ];
   }
 }

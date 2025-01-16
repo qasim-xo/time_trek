@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/ui_constants.dart';
+import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_settings_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/features/pomodoro/widgets/pomodoro_settings_sheet_widget.dart';
@@ -27,6 +28,11 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
   @override
   Widget build(BuildContext context) {
     final taskId = ref.watch(pomodoroTimerProvider).taskId;
+    final taskTitle = ref
+        .watch(taskProvider)
+        .taskList
+        .firstWhere((task) => task.taskId == taskId)
+        .taskTitle;
     final isRunning = ref.watch(pomodoroTimerProvider).isRunning;
     final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak;
     final isWidgetActive =
@@ -37,7 +43,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
     debugPrint("screen short break : $shortBreak");
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Pomodoro'),
+          title: Text(taskTitle),
           actions: [
             IconButton(
                 onPressed: () {

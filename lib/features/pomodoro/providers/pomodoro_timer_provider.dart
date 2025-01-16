@@ -209,7 +209,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void pauseTimer() {
     state = state.copyWith(isRunning: false);
-    state.timer!.cancel();
+    state.timer.cancel();
     cancelNotification();
 
     AudioService().stopSound();
@@ -250,7 +250,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
     setIsRunning(false);
 
-    state.timer!.cancel();
+    state.timer.cancel();
 
     showFloatingTimerWidget(false);
     state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
@@ -277,6 +277,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     await flutterLocalNotificationsPlugin.show(
       0,
       'Pomodoro Timer',
+      payload: 'pomodoro',
       state.pomodoroTime?.toClockFormat(),
       platformChannelSpecifics,
     );
