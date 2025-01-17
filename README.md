@@ -34,6 +34,7 @@ This separation of concerns ensures the app is scalable, testable, and easy to m
 - **Flutter**: For building a cross-platform app with a beautiful and responsive UI.
 - **Riverpod**: To manage state efficiently and implement the MVVM architecture.
 - **flutter_local_notifications**: For timely reminders.
+- **drift**: For local database.
 
 ## Installation
 
