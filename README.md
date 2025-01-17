@@ -6,6 +6,10 @@ Time Trek is a Pomodoro app built using Flutter and designed with the MVVM (Mode
 
 Distractions are everywhere, and staying focused can be a challenge. I created Time Trek to help overcome this struggle and to bring structure to my work and study sessions. The app is designed to make productivity simple and engaging while ensuring the user stays on track to achieve their goals.
 
+## File Structure
+![image](https://github.com/user-attachments/assets/0436e93f-256f-4df8-9b28-684dbadf3255)
+
+
 ## Features
 
 **Pomodoro Timer**: Work in focused time blocks, followed by short breaks.
