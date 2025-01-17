@@ -50,9 +50,6 @@ This separation of concerns ensures the app is scalable, testable, and easy to m
    flutter run
    ```
 
-## Screenshots
-
-(Include screenshots of the app here to showcase its UI and features.)
 
 ## Future Plans
 
