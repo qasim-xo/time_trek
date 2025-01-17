@@ -25,12 +25,11 @@ Time Trek is built using the MVVM architectural pattern to ensure a clean and ma
 
 This separation of concerns ensures the app is scalable, testable, and easy to maintain.
 
-## Technologies Used
+## Technologies and Packages Used
 
 - **Flutter**: For building a cross-platform app with a beautiful and responsive UI.
-- **Provider**: To manage state efficiently and implement the MVVM architecture.
-- **Shared Preferences**: To store user settings and progress locally.
-- **Local Notifications**: For timely reminders.
+- **Riverpod**: To manage state efficiently and implement the MVVM architecture.
+- **flutter_local_notifications**: For timely reminders.
 
 ## Installation
 
@@ -59,8 +58,8 @@ This separation of concerns ensures the app is scalable, testable, and easy to m
 
 - **Advanced Analytics**: Insights into your productivity trends.
 - **Gamification**: Earn rewards and achievements to stay motivated.
-- **Cloud Sync**: Backup and synchronize your progress across devices.
-- **Collaboration Features**: Share your Pomodoro sessions with friends or colleagues.
+- **Block apps**: Block addictive apps to improve focus.
+
 
 ## Contributing
 
