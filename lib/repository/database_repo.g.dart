@@ -856,6 +856,297 @@ class TaskDatabaseTableCompanion
   }
 }
 
+class $ProjectWiseStatsTableTable extends ProjectWiseStatsTable
+    with TableInfo<$ProjectWiseStatsTableTable, ProjectWiseStatsTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProjectWiseStatsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _projectIdMeta =
+      const VerificationMeta('projectId');
+  @override
+  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
+      'project_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES task_database_table (project_id)'));
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+      'date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _totalFocusedSessionsOnDateInSecondsMeta =
+      const VerificationMeta('totalFocusedSessionsOnDateInSeconds');
+  @override
+  late final GeneratedColumn<int> totalFocusedSessionsOnDateInSeconds =
+      GeneratedColumn<int>(
+          'total_focused_sessions_on_date_in_seconds', aliasedName, false,
+          type: DriftSqlType.int,
+          requiredDuringInsert: false,
+          defaultValue: Constant(0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, projectId, date, totalFocusedSessionsOnDateInSeconds];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'project_wise_stats_table';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<ProjectWiseStatsTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('project_id')) {
+      context.handle(_projectIdMeta,
+          projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta));
+    } else if (isInserting) {
+      context.missing(_projectIdMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('total_focused_sessions_on_date_in_seconds')) {
+      context.handle(
+          _totalFocusedSessionsOnDateInSecondsMeta,
+          totalFocusedSessionsOnDateInSeconds.isAcceptableOrUnknown(
+              data['total_focused_sessions_on_date_in_seconds']!,
+              _totalFocusedSessionsOnDateInSecondsMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ProjectWiseStatsTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProjectWiseStatsTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      projectId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}project_id'])!,
+      date: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      totalFocusedSessionsOnDateInSeconds: attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}total_focused_sessions_on_date_in_seconds'])!,
+    );
+  }
+
+  @override
+  $ProjectWiseStatsTableTable createAlias(String alias) {
+    return $ProjectWiseStatsTableTable(attachedDatabase, alias);
+  }
+}
+
+class ProjectWiseStatsTableData extends DataClass
+    implements Insertable<ProjectWiseStatsTableData> {
+  final int id;
+  final String projectId;
+  final DateTime date;
+  final int totalFocusedSessionsOnDateInSeconds;
+  const ProjectWiseStatsTableData(
+      {required this.id,
+      required this.projectId,
+      required this.date,
+      required this.totalFocusedSessionsOnDateInSeconds});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['project_id'] = Variable<String>(projectId);
+    map['date'] = Variable<DateTime>(date);
+    map['total_focused_sessions_on_date_in_seconds'] =
+        Variable<int>(totalFocusedSessionsOnDateInSeconds);
+    return map;
+  }
+
+  ProjectWiseStatsTableCompanion toCompanion(bool nullToAbsent) {
+    return ProjectWiseStatsTableCompanion(
+      id: Value(id),
+      projectId: Value(projectId),
+      date: Value(date),
+      totalFocusedSessionsOnDateInSeconds:
+          Value(totalFocusedSessionsOnDateInSeconds),
+    );
+  }
+
+  factory ProjectWiseStatsTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProjectWiseStatsTableData(
+      id: serializer.fromJson<int>(json['id']),
+      projectId: serializer.fromJson<String>(json['projectId']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      totalFocusedSessionsOnDateInSeconds:
+          serializer.fromJson<int>(json['totalFocusedSessionsOnDateInSeconds']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'projectId': serializer.toJson<String>(projectId),
+      'date': serializer.toJson<DateTime>(date),
+      'totalFocusedSessionsOnDateInSeconds':
+          serializer.toJson<int>(totalFocusedSessionsOnDateInSeconds),
+    };
+  }
+
+  ProjectWiseStatsTableData copyWith(
+          {int? id,
+          String? projectId,
+          DateTime? date,
+          int? totalFocusedSessionsOnDateInSeconds}) =>
+      ProjectWiseStatsTableData(
+        id: id ?? this.id,
+        projectId: projectId ?? this.projectId,
+        date: date ?? this.date,
+        totalFocusedSessionsOnDateInSeconds:
+            totalFocusedSessionsOnDateInSeconds ??
+                this.totalFocusedSessionsOnDateInSeconds,
+      );
+  ProjectWiseStatsTableData copyWithCompanion(
+      ProjectWiseStatsTableCompanion data) {
+    return ProjectWiseStatsTableData(
+      id: data.id.present ? data.id.value : this.id,
+      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      date: data.date.present ? data.date.value : this.date,
+      totalFocusedSessionsOnDateInSeconds:
+          data.totalFocusedSessionsOnDateInSeconds.present
+              ? data.totalFocusedSessionsOnDateInSeconds.value
+              : this.totalFocusedSessionsOnDateInSeconds,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectWiseStatsTableData(')
+          ..write('id: $id, ')
+          ..write('projectId: $projectId, ')
+          ..write('date: $date, ')
+          ..write(
+              'totalFocusedSessionsOnDateInSeconds: $totalFocusedSessionsOnDateInSeconds')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, projectId, date, totalFocusedSessionsOnDateInSeconds);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProjectWiseStatsTableData &&
+          other.id == this.id &&
+          other.projectId == this.projectId &&
+          other.date == this.date &&
+          other.totalFocusedSessionsOnDateInSeconds ==
+              this.totalFocusedSessionsOnDateInSeconds);
+}
+
+class ProjectWiseStatsTableCompanion
+    extends UpdateCompanion<ProjectWiseStatsTableData> {
+  final Value<int> id;
+  final Value<String> projectId;
+  final Value<DateTime> date;
+  final Value<int> totalFocusedSessionsOnDateInSeconds;
+  const ProjectWiseStatsTableCompanion({
+    this.id = const Value.absent(),
+    this.projectId = const Value.absent(),
+    this.date = const Value.absent(),
+    this.totalFocusedSessionsOnDateInSeconds = const Value.absent(),
+  });
+  ProjectWiseStatsTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String projectId,
+    required DateTime date,
+    this.totalFocusedSessionsOnDateInSeconds = const Value.absent(),
+  })  : projectId = Value(projectId),
+        date = Value(date);
+  static Insertable<ProjectWiseStatsTableData> custom({
+    Expression<int>? id,
+    Expression<String>? projectId,
+    Expression<DateTime>? date,
+    Expression<int>? totalFocusedSessionsOnDateInSeconds,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (projectId != null) 'project_id': projectId,
+      if (date != null) 'date': date,
+      if (totalFocusedSessionsOnDateInSeconds != null)
+        'total_focused_sessions_on_date_in_seconds':
+            totalFocusedSessionsOnDateInSeconds,
+    });
+  }
+
+  ProjectWiseStatsTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? projectId,
+      Value<DateTime>? date,
+      Value<int>? totalFocusedSessionsOnDateInSeconds}) {
+    return ProjectWiseStatsTableCompanion(
+      id: id ?? this.id,
+      projectId: projectId ?? this.projectId,
+      date: date ?? this.date,
+      totalFocusedSessionsOnDateInSeconds:
+          totalFocusedSessionsOnDateInSeconds ??
+              this.totalFocusedSessionsOnDateInSeconds,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (projectId.present) {
+      map['project_id'] = Variable<String>(projectId.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (totalFocusedSessionsOnDateInSeconds.present) {
+      map['total_focused_sessions_on_date_in_seconds'] =
+          Variable<int>(totalFocusedSessionsOnDateInSeconds.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectWiseStatsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('projectId: $projectId, ')
+          ..write('date: $date, ')
+          ..write(
+              'totalFocusedSessionsOnDateInSeconds: $totalFocusedSessionsOnDateInSeconds')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -863,12 +1154,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $ProjectDatabaseTableTable(this);
   late final $TaskDatabaseTableTable taskDatabaseTable =
       $TaskDatabaseTableTable(this);
+  late final $ProjectWiseStatsTableTable projectWiseStatsTable =
+      $ProjectWiseStatsTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [projectDatabaseTable, taskDatabaseTable];
+      [projectDatabaseTable, taskDatabaseTable, projectWiseStatsTable];
 }
 
 typedef $$ProjectDatabaseTableTableCreateCompanionBuilder
@@ -1489,6 +1782,166 @@ typedef $$TaskDatabaseTableTableProcessedTableManager = ProcessedTableManager<
     (TaskDatabaseTableData, $$TaskDatabaseTableTableReferences),
     TaskDatabaseTableData,
     PrefetchHooks Function({bool projectId})>;
+typedef $$ProjectWiseStatsTableTableCreateCompanionBuilder
+    = ProjectWiseStatsTableCompanion Function({
+  Value<int> id,
+  required String projectId,
+  required DateTime date,
+  Value<int> totalFocusedSessionsOnDateInSeconds,
+});
+typedef $$ProjectWiseStatsTableTableUpdateCompanionBuilder
+    = ProjectWiseStatsTableCompanion Function({
+  Value<int> id,
+  Value<String> projectId,
+  Value<DateTime> date,
+  Value<int> totalFocusedSessionsOnDateInSeconds,
+});
+
+class $$ProjectWiseStatsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ProjectWiseStatsTableTable> {
+  $$ProjectWiseStatsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get totalFocusedSessionsOnDateInSeconds =>
+      $composableBuilder(
+          column: $table.totalFocusedSessionsOnDateInSeconds,
+          builder: (column) => ColumnFilters(column));
+}
+
+class $$ProjectWiseStatsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProjectWiseStatsTableTable> {
+  $$ProjectWiseStatsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get totalFocusedSessionsOnDateInSeconds =>
+      $composableBuilder(
+          column: $table.totalFocusedSessionsOnDateInSeconds,
+          builder: (column) => ColumnOrderings(column));
+}
+
+class $$ProjectWiseStatsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProjectWiseStatsTableTable> {
+  $$ProjectWiseStatsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get totalFocusedSessionsOnDateInSeconds =>
+      $composableBuilder(
+          column: $table.totalFocusedSessionsOnDateInSeconds,
+          builder: (column) => column);
+}
+
+class $$ProjectWiseStatsTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ProjectWiseStatsTableTable,
+    ProjectWiseStatsTableData,
+    $$ProjectWiseStatsTableTableFilterComposer,
+    $$ProjectWiseStatsTableTableOrderingComposer,
+    $$ProjectWiseStatsTableTableAnnotationComposer,
+    $$ProjectWiseStatsTableTableCreateCompanionBuilder,
+    $$ProjectWiseStatsTableTableUpdateCompanionBuilder,
+    (
+      ProjectWiseStatsTableData,
+      BaseReferences<_$AppDatabase, $ProjectWiseStatsTableTable,
+          ProjectWiseStatsTableData>
+    ),
+    ProjectWiseStatsTableData,
+    PrefetchHooks Function()> {
+  $$ProjectWiseStatsTableTableTableManager(
+      _$AppDatabase db, $ProjectWiseStatsTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProjectWiseStatsTableTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProjectWiseStatsTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProjectWiseStatsTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> projectId = const Value.absent(),
+            Value<DateTime> date = const Value.absent(),
+            Value<int> totalFocusedSessionsOnDateInSeconds =
+                const Value.absent(),
+          }) =>
+              ProjectWiseStatsTableCompanion(
+            id: id,
+            projectId: projectId,
+            date: date,
+            totalFocusedSessionsOnDateInSeconds:
+                totalFocusedSessionsOnDateInSeconds,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String projectId,
+            required DateTime date,
+            Value<int> totalFocusedSessionsOnDateInSeconds =
+                const Value.absent(),
+          }) =>
+              ProjectWiseStatsTableCompanion.insert(
+            id: id,
+            projectId: projectId,
+            date: date,
+            totalFocusedSessionsOnDateInSeconds:
+                totalFocusedSessionsOnDateInSeconds,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ProjectWiseStatsTableTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $ProjectWiseStatsTableTable,
+        ProjectWiseStatsTableData,
+        $$ProjectWiseStatsTableTableFilterComposer,
+        $$ProjectWiseStatsTableTableOrderingComposer,
+        $$ProjectWiseStatsTableTableAnnotationComposer,
+        $$ProjectWiseStatsTableTableCreateCompanionBuilder,
+        $$ProjectWiseStatsTableTableUpdateCompanionBuilder,
+        (
+          ProjectWiseStatsTableData,
+          BaseReferences<_$AppDatabase, $ProjectWiseStatsTableTable,
+              ProjectWiseStatsTableData>
+        ),
+        ProjectWiseStatsTableData,
+        PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1497,4 +1950,6 @@ class $AppDatabaseManager {
       $$ProjectDatabaseTableTableTableManager(_db, _db.projectDatabaseTable);
   $$TaskDatabaseTableTableTableManager get taskDatabaseTable =>
       $$TaskDatabaseTableTableTableManager(_db, _db.taskDatabaseTable);
+  $$ProjectWiseStatsTableTableTableManager get projectWiseStatsTable =>
+      $$ProjectWiseStatsTableTableTableManager(_db, _db.projectWiseStatsTable);
 }

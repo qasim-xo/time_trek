@@ -232,12 +232,14 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
         .read(taskProvider)
         .taskList
         .firstWhere((task) => task.taskId == state.taskId);
+
     final calculateChangeBetweenLastFocusedPausedAndRunningTimer =
         (state.lastFocusedSessionPausedInSeconds -
             state.pomodoroTime!.inSeconds);
 
     state.totalFocusedSessionsInSeconds = task.totalFocusedSessionsInSeconds +
         calculateChangeBetweenLastFocusedPausedAndRunningTimer;
+
     state = state.copyWith(
         totalFocusedSessionsInSeconds: state.totalFocusedSessionsInSeconds);
 

@@ -5,10 +5,12 @@ import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/repository/dao/project/project_dao.dart';
 import 'package:project_management_app/repository/dao/task/task_dao.dart';
 import 'package:project_management_app/repository/tables/project_table.dart';
+import 'package:project_management_app/repository/tables/project_wise_stats_table.dart';
 import 'package:project_management_app/repository/tables/task_table.dart';
 part 'database_repo.g.dart';
 
-@DriftDatabase(tables: [TaskDatabaseTable, ProjectDatabaseTable])
+@DriftDatabase(
+    tables: [TaskDatabaseTable, ProjectDatabaseTable, ProjectWiseStatsTable])
 class AppDatabase extends _$AppDatabase {
   static final _instance = AppDatabase._internal();
   factory AppDatabase() => _instance;
