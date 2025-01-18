@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/data_constants.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
-import 'package:project_management_app/features/add_show_task/providers/state_model_classes/task_state.dart';
+import 'package:project_management_app/features/add_show_task/providers/state/task_state.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
 import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/model/task/task.dart';
@@ -17,7 +17,8 @@ class TaskNotifier extends Notifier<TaskState> {
   }
 
   void addTask() {
-    var taskId = const Uuid().v4();
+    final taskId = const Uuid().v4();
+    final notiID = const Uuid().v4().hashCode;
     final newTask = Task(
         taskId: taskId,
         taskTitle: state.title,
@@ -27,7 +28,8 @@ class TaskNotifier extends Notifier<TaskState> {
         projectId: state.projectId,
         isCompleted: false,
         reminderDateTime: state.reminderDateTime,
-        repeat: state.repeat);
+        repeat: state.repeat,
+        notificationID: notiID);
 
     state = state.copyWith(
         taskList: [...state.taskList, newTask],
@@ -36,12 +38,12 @@ class TaskNotifier extends Notifier<TaskState> {
     AppDatabase().taskDao.addTask(newTask.toCompanion());
 
     if (state.reminderDate != null && state.reminderTime != null) {
-      setNotifications(state.reminderDate!, state.reminderTime!);
+      setNotifications(state.reminderDateTime!, newTask);
     }
   }
 
-  void setNotifications(DateTime date, TimeOfDay time) {
-    NotificationService().scheduleNotification(date, time);
+  void setNotifications(DateTime reminderDateTime, Task task) {
+    NotificationService().scheduleNotification(reminderDateTime, task);
   }
 
   void setProjectId(String projectId) {
@@ -73,6 +75,10 @@ class TaskNotifier extends Notifier<TaskState> {
         filteredTaskList: deletedTaskListItem, taskList: deletedTaskListItem);
 
     AppDatabase().taskDao.deleteTask(task.taskId);
+
+    if (task.reminderDateTime != null) {
+      NotificationService().cancelNotification(task.notificationID);
+    }
   }
 
   void fetchAllTasks() async {

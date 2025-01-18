@@ -41,6 +41,10 @@ extension DateTimeFormatting on DateTime {
   String toMMMDD() {
     return DateFormat('MMM dd').format(this);
   }
+
+  String toTimeAndDate() {
+    return DateFormat('MMM d, h:mm a').format(this);
+  }
 }
 
 extension StringCasingExtension on String {
@@ -56,6 +60,7 @@ extension TaskToCompanion on Task {
   TaskDatabaseTableCompanion toCompanion() {
     return TaskDatabaseTableCompanion(
         taskId: Value(taskId),
+        notificationID: Value(notificationID),
         taskTitle: Value(taskTitle),
         taskDesc: Value(taskDesc),
         dueDate: Value(dueDate),
@@ -98,7 +103,8 @@ extension TaskDataListToTaskList on List<TaskDatabaseTableData> {
           projectId: taskData.projectId,
           reminderDateTime: taskData.reminderDateTime,
           isCompleted: taskData.isCompleted,
-          repeat: taskData.repeat);
+          repeat: taskData.repeat,
+          notificationID: taskData.notificationID);
     }).toList();
   }
 }

@@ -271,7 +271,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
   void showNotificationWithTimer() async {
     fln.NotificationDetails platformChannelSpecifics = fln.NotificationDetails(
-      android: NotificationService().androidPlatformChannelSpecifics,
+      android: NotificationService().timerChannelNotiDetails,
     );
 
     await flutterLocalNotificationsPlugin.show(

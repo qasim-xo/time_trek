@@ -1,34 +1,36 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/constants/extension_constants.dart';
+import 'package:project_management_app/features/add_show_project/providers/state/project_state.dart';
 import 'package:project_management_app/features/add_show_task/providers/add_task_provider.dart';
 import 'package:project_management_app/features/pomodoro/providers/pomodoro_timer_provider.dart';
+import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/model/project/project.dart';
 import 'package:project_management_app/repository/database_repo.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 import 'package:uuid/uuid.dart';
 
-class ProjectState {
-  List<Project> projectList;
-  String projectId;
-  String projectTitle;
+// class ProjectState {
+//   List<Project> projectList;
+//   String projectId;
+//   String projectTitle;
 
-  ProjectState(
-      {required this.projectList,
-      required this.projectId,
-      required this.projectTitle});
+//   ProjectState(
+//       {required this.projectList,
+//       required this.projectId,
+//       required this.projectTitle});
 
-  ProjectState copyWith(
-      {String? projectId, String? projectTitle, List<Project>? projectList}) {
-    return ProjectState(
-        projectList: projectList ?? this.projectList,
-        projectId: projectId ?? this.projectId,
-        projectTitle: projectTitle ?? this.projectTitle);
-  }
+//   ProjectState copyWith(
+//       {String? projectId, String? projectTitle, List<Project>? projectList}) {
+//     return ProjectState(
+//         projectList: projectList ?? this.projectList,
+//         projectId: projectId ?? this.projectId,
+//         projectTitle: projectTitle ?? this.projectTitle);
+//   }
 
-  factory ProjectState.initial() {
-    return ProjectState(projectList: [], projectId: '', projectTitle: '');
-  }
-}
+//   factory ProjectState.initial() {
+//     return ProjectState(projectList: [], projectId: '', projectTitle: '');
+//   }
+// }
 
 class ProjectNotifier extends Notifier<ProjectState> {
   @override
@@ -63,26 +65,23 @@ class ProjectNotifier extends Notifier<ProjectState> {
     int index = state.projectList.indexOf(project);
     // final isRunning = ref.read(pomodoroTimerProvider).isRunning;
 
-    final isWidgetActive = ref.read(floatingPomodoroTimerProvider).isWidgetActive; 
+    final isWidgetActive =
+        ref.read(floatingPomodoroTimerProvider).isWidgetActive;
 
-    if(isWidgetActive)
-    {
-       final runningTaskId = ref.read(pomodoroTimerProvider).taskId;
-    final task = ref
-        .read(taskProvider)
-        .taskList
-        .firstWhere((task) => task.taskId == runningTaskId);
+    if (isWidgetActive) {
+      final runningTaskId = ref.read(pomodoroTimerProvider).taskId;
+      final task = ref
+          .read(taskProvider)
+          .taskList
+          .firstWhere((task) => task.taskId == runningTaskId);
 
-    final runningProject = state.projectList
-        .firstWhere((project) => project.projectId == task.projectId);
+      final runningProject = state.projectList
+          .firstWhere((project) => project.projectId == task.projectId);
 
-    if (project.projectId == runningProject.projectId) {
-      ref.read(pomodoroTimerProvider.notifier).resetTimer();
+      if (project.projectId == runningProject.projectId) {
+        ref.read(pomodoroTimerProvider.notifier).resetTimer();
+      }
     }
-
-  }
-
-   
 
     final deletedProjectListItem = state.projectList.toList();
     deletedProjectListItem.removeAt(index);
@@ -90,6 +89,22 @@ class ProjectNotifier extends Notifier<ProjectState> {
     state = state.copyWith(projectList: deletedProjectListItem);
 
     AppDatabase().projectDao.deleteProject(project.projectId);
+
+    deleteNotifications(project);
+  }
+
+  void deleteNotifications(Project project) {
+    final tasks = ref
+        .read(taskProvider)
+        .taskList
+        .where((task) => task.projectId == project.projectId)
+        .toList();
+
+    for (var task in tasks) {
+      if (task.reminderDateTime != null) {
+        NotificationService().cancelNotification(task.notificationID);
+      }
+    }
   }
 
   void updateProject(Project project) {

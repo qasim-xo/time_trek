@@ -35,8 +35,6 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
         .taskTitle;
     final isRunning = ref.watch(pomodoroTimerProvider).isRunning;
     final shortBreak = ref.watch(pomodoroSettingsProvider).shortBreak;
-    final isWidgetActive =
-        ref.watch(floatingPomodoroTimerProvider).isWidgetActive;
 
     final isPlaySound = ref.watch(pomodoroSettingsProvider).isPlaySound;
 

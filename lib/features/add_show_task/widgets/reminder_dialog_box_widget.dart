@@ -30,6 +30,8 @@ class ReminderDialogBoxWidget extends ConsumerWidget {
               ref
                   .read(taskProvider.notifier)
                   .setReminderDateTime(reminderDateTime);
+
+              context.router.maybePop();
             },
             child: Text("Save")),
         TextButton(

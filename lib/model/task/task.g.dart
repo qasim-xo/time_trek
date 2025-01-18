@@ -8,6 +8,7 @@ part of 'task.dart';
 
 _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
       taskId: json['taskId'] as String,
+      notificationID: (json['notificationID'] as num).toInt(),
       taskTitle: json['taskTitle'] as String,
       taskDesc: json['taskDesc'] as String,
       dueDate: DateTime.parse(json['dueDate'] as String),
@@ -25,6 +26,7 @@ _$TaskImpl _$$TaskImplFromJson(Map<String, dynamic> json) => _$TaskImpl(
 Map<String, dynamic> _$$TaskImplToJson(_$TaskImpl instance) =>
     <String, dynamic>{
       'taskId': instance.taskId,
+      'notificationID': instance.notificationID,
       'taskTitle': instance.taskTitle,
       'taskDesc': instance.taskDesc,
       'dueDate': instance.dueDate.toIso8601String(),

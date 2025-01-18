@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:project_management_app/main.dart';
+import 'package:project_management_app/model/task/task.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -14,7 +15,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  AndroidNotificationDetails androidPlatformChannelSpecifics =
+  AndroidNotificationDetails timerChannelNotiDetails =
       AndroidNotificationDetails('timer_channel', 'Timer Notifications',
           importance: Importance.low,
           priority: Priority.high,
@@ -23,22 +24,24 @@ class NotificationService {
           ongoing: true,
           showWhen: false);
 
+  AndroidNotificationDetails reminderChannelNotiDetails =
+      AndroidNotificationDetails(
+    'reminder_channel',
+    'Reminder Notification',
+    enableVibration: true,
+    playSound: true,
+    importance: Importance.high,
+    priority: Priority.high,
+    autoCancel: true,
+    icon: '@mipmap/ic_launcher',
+  );
+
   DarwinNotificationDetails iOSPlatformChannelSpecifics =
       DarwinNotificationDetails(
     presentAlert: true, // Display an alert
     presentSound: false, // Disable sound
     presentBadge: false, // Disable badge
     subtitle: 'Timer Notification', // Optional subtitle
-  );
-
-  AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
-    'channel_id', // Channel ID
-    'channel_name', // Channel name
-    channelDescription: 'Your channel description',
-    importance: Importance.high,
-    priority: Priority.high,
-    ticker: 'ticker',
   );
 
   Future<void> initialize() async {
@@ -68,29 +71,23 @@ class NotificationService {
     );
   }
 
-  void cancelNotification(int notificationId) {
+  void cancelNotification(
+    int notificationId,
+  ) {
     flutterLocalNotificationsPlugin.cancel(notificationId);
   }
 
-  void scheduleNotification(DateTime date, TimeOfDay time) async {
-    final combinedDateTime = combineDateTime(date, time);
-
-    // Convert DateTime to TZDateTime
+  void scheduleNotification(DateTime reminderDateTime, Task task) async {
     final tz.TZDateTime scheduledDate =
-        tz.TZDateTime.from(combinedDateTime, tz.local);
+        tz.TZDateTime.from(reminderDateTime, tz.local);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'Scheduled Notification',
-      'This notification is based on DateTime and TimeOfDay.',
+      task.notificationID,
+      task.taskTitle,
+      'Reminder',
       scheduledDate,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'your_channel_id',
-          'your_channel_name',
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
+      NotificationDetails(
+        android: NotificationService().reminderChannelNotiDetails,
       ),
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,

@@ -192,7 +192,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                         child: const Icon(Icons.notifications)),
                     hintText: reminderDateTime == null
                         ? 'Not set'
-                        : reminderDateTime.toMMMDD(),
+                        : reminderDateTime.toTimeAndDate(),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(),
                     labelText: 'Reminder',
@@ -219,7 +219,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                       priority: selectedOption,
                       projectId: widget.task!.projectId,
                       isCompleted: widget.task!.isCompleted,
-                      repeat: widget.task!.repeat);
+                      repeat: widget.task!.repeat,
+                      notificationID: widget.task!.notificationID);
                   ref.read(taskProvider.notifier).updateTask(updatedTask);
                 } else {
                   ref

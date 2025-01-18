@@ -9,6 +9,7 @@ part 'task.g.dart';
 abstract class Task with _$Task {
   factory Task({
     required String taskId,
+    required int notificationID,
     required String taskTitle,
     required String taskDesc,
     required DateTime dueDate,

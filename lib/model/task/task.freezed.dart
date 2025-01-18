@@ -21,6 +21,7 @@ Task _$TaskFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Task {
   String get taskId => throw _privateConstructorUsedError;
+  int get notificationID => throw _privateConstructorUsedError;
   String get taskTitle => throw _privateConstructorUsedError;
   String get taskDesc => throw _privateConstructorUsedError;
   DateTime get dueDate => throw _privateConstructorUsedError;
@@ -43,6 +44,7 @@ abstract class $TaskCopyWith<$Res> {
   @useResult
   $Res call(
       {String taskId,
+      int notificationID,
       String taskTitle,
       String taskDesc,
       DateTime dueDate,
@@ -68,6 +70,7 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
   @override
   $Res call({
     Object? taskId = null,
+    Object? notificationID = null,
     Object? taskTitle = null,
     Object? taskDesc = null,
     Object? dueDate = null,
@@ -83,6 +86,10 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
           ? _value.taskId
           : taskId // ignore: cast_nullable_to_non_nullable
               as String,
+      notificationID: null == notificationID
+          ? _value.notificationID
+          : notificationID // ignore: cast_nullable_to_non_nullable
+              as int,
       taskTitle: null == taskTitle
           ? _value.taskTitle
           : taskTitle // ignore: cast_nullable_to_non_nullable
@@ -132,6 +139,7 @@ abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
   @useResult
   $Res call(
       {String taskId,
+      int notificationID,
       String taskTitle,
       String taskDesc,
       DateTime dueDate,
@@ -154,6 +162,7 @@ class __$$TaskImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? taskId = null,
+    Object? notificationID = null,
     Object? taskTitle = null,
     Object? taskDesc = null,
     Object? dueDate = null,
@@ -169,6 +178,10 @@ class __$$TaskImplCopyWithImpl<$Res>
           ? _value.taskId
           : taskId // ignore: cast_nullable_to_non_nullable
               as String,
+      notificationID: null == notificationID
+          ? _value.notificationID
+          : notificationID // ignore: cast_nullable_to_non_nullable
+              as int,
       taskTitle: null == taskTitle
           ? _value.taskTitle
           : taskTitle // ignore: cast_nullable_to_non_nullable
@@ -214,6 +227,7 @@ class __$$TaskImplCopyWithImpl<$Res>
 class _$TaskImpl implements _Task {
   _$TaskImpl(
       {required this.taskId,
+      required this.notificationID,
       required this.taskTitle,
       required this.taskDesc,
       required this.dueDate,
@@ -229,6 +243,8 @@ class _$TaskImpl implements _Task {
 
   @override
   final String taskId;
+  @override
+  final int notificationID;
   @override
   final String taskTitle;
   @override
@@ -251,7 +267,7 @@ class _$TaskImpl implements _Task {
 
   @override
   String toString() {
-    return 'Task(taskId: $taskId, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId, isCompleted: $isCompleted, totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, reminderDateTime: $reminderDateTime, repeat: $repeat)';
+    return 'Task(taskId: $taskId, notificationID: $notificationID, taskTitle: $taskTitle, taskDesc: $taskDesc, dueDate: $dueDate, priority: $priority, projectId: $projectId, isCompleted: $isCompleted, totalFocusedSessionsInSeconds: $totalFocusedSessionsInSeconds, reminderDateTime: $reminderDateTime, repeat: $repeat)';
   }
 
   @override
@@ -260,6 +276,8 @@ class _$TaskImpl implements _Task {
         (other.runtimeType == runtimeType &&
             other is _$TaskImpl &&
             (identical(other.taskId, taskId) || other.taskId == taskId) &&
+            (identical(other.notificationID, notificationID) ||
+                other.notificationID == notificationID) &&
             (identical(other.taskTitle, taskTitle) ||
                 other.taskTitle == taskTitle) &&
             (identical(other.taskDesc, taskDesc) ||
@@ -285,6 +303,7 @@ class _$TaskImpl implements _Task {
   int get hashCode => Object.hash(
       runtimeType,
       taskId,
+      notificationID,
       taskTitle,
       taskDesc,
       dueDate,
@@ -312,6 +331,7 @@ class _$TaskImpl implements _Task {
 abstract class _Task implements Task {
   factory _Task(
       {required final String taskId,
+      required final int notificationID,
       required final String taskTitle,
       required final String taskDesc,
       required final DateTime dueDate,
@@ -326,6 +346,8 @@ abstract class _Task implements Task {
 
   @override
   String get taskId;
+  @override
+  int get notificationID;
   @override
   String get taskTitle;
   @override

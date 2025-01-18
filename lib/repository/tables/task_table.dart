@@ -5,6 +5,7 @@ import 'package:project_management_app/repository/tables/project_table.dart';
 class TaskDatabaseTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get taskId => text()();
+  IntColumn get notificationID => integer()();
   TextColumn get taskTitle => text()();
   TextColumn get taskDesc => text()();
   DateTimeColumn get dueDate => dateTime()();
