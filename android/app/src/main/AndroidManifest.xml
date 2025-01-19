@@ -18,6 +18,7 @@
     </intent-filter>
 </receiver>
         <activity
+            android:enableOnBackInvokedCallback="false"
             android:name=".MainActivity"
             android:exported="true"
             android:showWhenLocked="true"
