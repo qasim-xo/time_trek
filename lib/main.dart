@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/router/app_router.dart';
+import 'package:project_management_app/service/foreground_task_service.dart';
 import 'package:project_management_app/theme/app_theme.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -12,6 +13,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   NotificationService().initialize();
+
+  requestPermissions();
+  ForegroundTaskService.init();
+
+  startService();
 
   runApp(const ProviderScope(child: MyApp()));
 }
