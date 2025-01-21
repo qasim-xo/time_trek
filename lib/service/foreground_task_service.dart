@@ -120,7 +120,7 @@ Future<ServiceRequestResult> startService() async {
   } else {
     return FlutterForegroundTask.startService(
       serviceId: 256,
-      notificationTitle: 'Foreground Service is running',
+      notificationTitle: 'Pomdoro timer is running',
       notificationText: 'Tap to return to the app',
       notificationIcon: null,
       notificationButtons: [
@@ -130,4 +130,8 @@ Future<ServiceRequestResult> startService() async {
       callback: startCallback,
     );
   }
+}
+
+Future<ServiceRequestResult> stopService() {
+  return FlutterForegroundTask.stopService();
 }

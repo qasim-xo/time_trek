@@ -17,8 +17,6 @@ void main() async {
   requestPermissions();
   ForegroundTaskService.init();
 
-  startService();
-
   runApp(const ProviderScope(child: MyApp()));
 }
 

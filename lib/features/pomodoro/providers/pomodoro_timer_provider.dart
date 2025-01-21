@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as fln;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ import 'package:project_management_app/features/pomodoro/providers/pomodoro_sett
 import 'package:project_management_app/features/pomodoro/services/audio_service.dart';
 import 'package:project_management_app/features/pomodoro/services/notification_service.dart';
 import 'package:project_management_app/main.dart';
+import 'package:project_management_app/service/foreground_task_service.dart';
 import 'package:project_management_app/shared/providers/floating_pomodoro_timer_provider.dart';
 
 class PomodoroTimerState {
@@ -114,6 +116,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   }
 
   void startFocusSession() {
+    startService();
     showFloatingTimerWidget(true);
     startTimer();
     showNotificationWithTimer();
@@ -210,7 +213,9 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   void pauseTimer() {
     state = state.copyWith(isRunning: false);
     state.timer.cancel();
-    cancelNotification();
+    // cancelNotification();
+
+    stopService();
 
     AudioService().stopSound();
     // ref.read(pomodoroSettingsProvider.notifier).setIsPlaySound(false);
@@ -272,17 +277,24 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   }
 
   void showNotificationWithTimer() async {
-    fln.NotificationDetails platformChannelSpecifics = fln.NotificationDetails(
-      android: NotificationService().timerChannelNotiDetails,
-    );
+    // fln.NotificationDetails platformChannelSpecifics = fln.NotificationDetails(
+    //   android: NotificationService().timerChannelNotiDetails,
+    // );
 
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Pomodoro Timer',
-      payload: 'pomodoro',
-      state.pomodoroTime?.toClockFormat(),
-      platformChannelSpecifics,
-    );
+    if (await FlutterForegroundTask.isRunningService) {
+      await FlutterForegroundTask.updateService(
+          notificationText: state.pomodoroTime?.toClockFormat());
+    } else {
+      debugPrint('Foreground service is not running');
+    }
+
+    // await flutterLocalNotificationsPlugin.show(
+    //   0,
+    //   'Pomodoro Timer',
+    //   payload: 'pomodoro',
+    //   state.pomodoroTime?.toClockFormat(),
+    //   platformChannelSpecifics,
+    // );
   }
 }
 
