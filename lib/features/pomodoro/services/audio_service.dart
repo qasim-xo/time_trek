@@ -1,4 +1,5 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:project_management_app/constants/string_constants.dart';
 
 class AudioService {
   // Private constructor
@@ -20,6 +21,16 @@ class AudioService {
     _player.setLoopMode(LoopMode.one);
     _player.setAsset(assetPath);
     await _player.play();
+  }
+
+  Future<void> playAlarm() async {
+    if (_player.playing) {
+      await _player.stop();
+    }
+
+    _player.setAsset(alarmSound);
+    await _player.play();
+    await _player.stop();
   }
 
   // Method to stop the sound

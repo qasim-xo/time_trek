@@ -123,9 +123,6 @@ Future<ServiceRequestResult> startService() async {
       notificationTitle: 'Pomdoro timer is running',
       notificationText: 'Tap to return to the app',
       notificationIcon: null,
-      notificationButtons: [
-        const NotificationButton(id: 'btn_hello', text: 'hello'),
-      ],
       notificationInitialRoute: '/',
       callback: startCallback,
     );

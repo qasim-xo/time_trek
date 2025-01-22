@@ -179,11 +179,13 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
       setPomodoroTime(focusSession);
       setSelectedPomodoroTime(focusSession);
+      updateNotification(focusSession);
     } else if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       debugPrint("Count Focus Sessions : ${state.countFocusSessions}");
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.shortBreak);
       setPomodoroTime(shortBreak);
       setSelectedPomodoroTime(shortBreak);
+      updateNotification(shortBreak);
     }
   }
 
@@ -195,10 +197,12 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.focusSession);
       setPomodoroTime(focusSession);
       setSelectedPomodoroTime(focusSession);
+      updateNotification(focusSession);
     } else if (state.pomodoroTimerType == PomodoroTimerType.focusSession) {
       state = state.copyWith(pomodoroTimerType: PomodoroTimerType.longBreak);
       setPomodoroTime(longBreak);
       setSelectedPomodoroTime(longBreak);
+      updateNotification(longBreak);
     }
   }
 
@@ -215,7 +219,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     state.timer.cancel();
     // cancelNotification();
 
-    stopService();
+    // stopService();
 
     AudioService().stopSound();
     // ref.read(pomodoroSettingsProvider.notifier).setIsPlaySound(false);
@@ -274,6 +278,15 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
 
     ref.read(onPauseStateProvider.notifier).state =
         state.selectedPomodoroTime.inSeconds;
+  }
+
+  void updateNotification(Duration pomodoroTime) async {
+    if (await FlutterForegroundTask.isRunningService) {
+      await FlutterForegroundTask.updateService(
+          notificationText: pomodoroTime.toClockFormat());
+    } else {
+      debugPrint('Foreground service is not running');
+    }
   }
 
   void showNotificationWithTimer() async {

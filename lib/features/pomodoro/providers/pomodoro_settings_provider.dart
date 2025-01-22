@@ -86,7 +86,7 @@ class PomodoroSettingsNotifier extends Notifier<PomodoroSettingsState> {
   }
 
   void playAlarmSound() {
-    AudioService().playSound(alarmSound);
+    AudioService().playAlarm();
     // AudioPlayer player = AudioPlayer();
     // player.play(AssetSource(alarmSound, mimeType: 'audio/mp3'));
   }
